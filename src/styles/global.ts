@@ -1,12 +1,13 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle } from 'styled-components';
 
 export default createGlobalStyle`
   :root {
-    --color-background: #FFFFFF;
+    --color-background: #ffffff;
     --color-primary: #ffba00;
     --color-primary-light: #feefc3;
     --color-text-base: #3c4043;
     --color-text-secondary: #80868b;
+    --color-text-logo: #5f6368;
     --color-icon-base: #5f6368;
     --color-icon-secondary: #767676;
     --color-icon-light: #cccccc;
