@@ -28,7 +28,7 @@ export default createGlobalStyle`
     -webkit-font-smoothing: antialiased;
   }
 
-  body, input, button, span {
+  body, input, textarea, button, span {
     font-family: 'Montserrat','Roboto','Arial',sans-serif;
     font-weight: 500;
     font-size: 1.6rem;

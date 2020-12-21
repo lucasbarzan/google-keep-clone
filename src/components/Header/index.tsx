@@ -12,7 +12,11 @@ interface SearchFormData {
   search: string;
 }
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  onToggleSidebar(): void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
   const formRef = useRef<FormHandles>(null);
 
   const handleSearch = useCallback((data: SearchFormData) => {
@@ -22,7 +26,7 @@ const Header: React.FC = () => {
 
   return (
     <Container>
-      <CircularButton icon={MdMenu} />
+      <CircularButton icon={MdMenu} onClick={() => onToggleSidebar()} />
       <img src={Logo} alt="Google Keep Clone Logo" />
       <h1>Keep Clone</h1>
       <Form ref={formRef} onSubmit={handleSearch}>

@@ -9,6 +9,7 @@ interface CircularButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   containerSize?: number;
   hoverColor?: string;
   visibility?: string;
+  onClick?: () => void;
 }
 
 const CircularButton: React.FC<CircularButtonProps> = ({
@@ -17,6 +18,7 @@ const CircularButton: React.FC<CircularButtonProps> = ({
   containerSize = 4.8,
   hoverColor = '#f0f0f0',
   visibility = 'visible',
+  onClick,
 }) => {
   return (
     <Container
@@ -24,6 +26,7 @@ const CircularButton: React.FC<CircularButtonProps> = ({
       hoverColor={hoverColor}
       type="button"
       visibility={visibility}
+      onClick={onClick}
     >
       {Icon && <Icon size={iconSize} />}
     </Container>
