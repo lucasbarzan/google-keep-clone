@@ -10,7 +10,7 @@ import getNextColor from '../../utils/getNextColor';
 import { Container, optionIconSize, optionContainerSize } from './styles';
 
 interface Note {
-  id: number;
+  id: string;
   title: string;
   body: string;
   color: number;
@@ -18,7 +18,7 @@ interface Note {
 
 interface NoteBlockProps {
   note: Note;
-  onUpdateNoteColor(id: number, color: number): void;
+  onUpdateNoteColor(id: string, color: number): void;
   onOpenNote?: (note: Note) => void;
   onCloseAndSaveNote?: (note: Note) => void;
   onArchiveNote?: (note: Note) => void;

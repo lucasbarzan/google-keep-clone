@@ -15,6 +15,11 @@ export const Container = styled.div<ContainerProps>`
   max-width: ${props => (props.show ? '28rem' : '0rem')};
   transition: max-width 0.12s ease-in-out;
 
+  a {
+    text-decoration: none;
+    color: var(--color-text-base);
+  }
+
   p {
     margin: auto 0 1rem 2.4rem;
     font-family: 'Roboto';

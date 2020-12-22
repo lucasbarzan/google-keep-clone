@@ -37,6 +37,8 @@ export const Container = styled.div<ContainerProps>`
     border: 0;
     font-size: ${props => (props.expand ? '1.4rem' : '1.6rem')};
     padding: 1.6rem;
+    resize: vertical;
+    overflow: auto;
   }
 
   @media (min-width: 1024px) {

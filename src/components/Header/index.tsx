@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { MdMenu } from 'react-icons/md';
 
 import CircularButton from '../CircularButton';
@@ -15,8 +16,10 @@ const Header: React.FC<HeaderProps> = ({ onToggleSidebar, onSearch }) => {
   return (
     <Container>
       <CircularButton icon={MdMenu} onClick={() => onToggleSidebar()} />
-      <img src={Logo} alt="Google Keep Clone Logo" />
-      <h1>Keep Clone</h1>
+      <Link to="/">
+        <img src={Logo} alt="Google Keep Clone Logo" />
+        <h1>Keep Clone</h1>
+      </Link>
       <SearchBar name="search" onSearch={onSearch} />
     </Container>
   );

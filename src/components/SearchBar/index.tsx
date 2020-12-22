@@ -42,7 +42,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, ...rest }) => {
 
   const handleClear = useCallback(() => {
     setQuery('');
-  }, []);
+
+    onSearch('');
+  }, [onSearch]);
 
   return (
     <Container isFocused={isFocused} hasFocusedBefore={hasFocusedBefore}>
@@ -50,6 +52,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, ...rest }) => {
       <input
         type="text"
         placeholder="Pesquisar"
+        value={query}
         onChange={handleInputChange}
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}

@@ -1,23 +1,29 @@
 /* eslint-disable no-param-reassign */
 import React, { useCallback, useState } from 'react';
+import { useNotes } from '../../hooks/notes';
 
 import { Container, Options } from './styles';
 
 interface Note {
-  id: number;
+  id: string;
   title: string;
   body: string;
   color: number;
 }
 
-interface CreateNoteBarProps {
-  onAddNote(note: Note): void;
-}
-
-const CreateNoteBar: React.FC<CreateNoteBarProps> = ({ onAddNote }) => {
+const CreateNoteBar: React.FC = () => {
   const [expand, setExpand] = useState(false);
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
+
+  const { addNote } = useNotes();
+
+  const handleAddNote = useCallback(
+    (note: Omit<Note, 'id' | 'color'>) => {
+      addNote({ ...note, color: 0, id: '0' });
+    },
+    [addNote],
+  );
 
   const handleFocus = useCallback(() => {
     setExpand(true);
@@ -25,13 +31,13 @@ const CreateNoteBar: React.FC<CreateNoteBarProps> = ({ onAddNote }) => {
 
   const handleBlur = useCallback(() => {
     if (title || body) {
-      onAddNote({ id: 0, color: 0, title, body });
+      handleAddNote({ title, body });
     } else {
       setExpand(false);
     }
     setTitle('');
     setBody('');
-  }, [onAddNote, body, title]);
+  }, [handleAddNote, body, title]);
 
   return (
     <Container expand={expand}>
@@ -50,7 +56,6 @@ const CreateNoteBar: React.FC<CreateNoteBarProps> = ({ onAddNote }) => {
         onChange={e => setBody(e.target.value)}
         rows={1}
         onFocus={handleFocus}
-        style={{ resize: 'vertical', overflow: 'auto' }}
       />
       <Options expand={expand}>
         <button type="button" onClick={handleBlur}>
