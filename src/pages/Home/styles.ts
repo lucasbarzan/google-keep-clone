@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { CSSProperties } from 'react';
+import { Styles as ModalStyles } from 'react-modal';
 
 export const Container = styled.div``;
 
@@ -28,11 +28,6 @@ export const Notes = styled.div`
   max-width: 85%;
   margin: 2.4rem auto;
 `;
-
-interface ModalStyles {
-  content?: CSSProperties;
-  overlay?: CSSProperties;
-}
 
 export const modalStyle: ModalStyles = {
   overlay: {

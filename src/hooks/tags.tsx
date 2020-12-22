@@ -1,36 +1,34 @@
 import React, { createContext, useState, useCallback, useContext } from 'react';
 
-export interface SidebarItem {
+export interface TagItem {
   id: string;
   name: string;
 }
 
-interface SidebarContextData {
-  getTags(): SidebarItem[];
-  addTag(tag: SidebarItem): void;
-  setTags(tags: SidebarItem[]): void;
+interface TagsContextData {
+  getTags(): TagItem[];
+  addTag(tag: TagItem): void;
+  setTags(tags: TagItem[]): void;
   removeTag(id: string): void;
   selectTag(id: string): void;
   isSelected(id: string): boolean;
 }
 
-const SidebarContext = createContext<SidebarContextData>(
-  {} as SidebarContextData,
-);
+const TagsContext = createContext<TagsContextData>({} as TagsContextData);
 
-const SidebarProvider: React.FC = ({ children }) => {
-  const [allTags, setAllTags] = useState<SidebarItem[]>([]);
+const TagsProvider: React.FC = ({ children }) => {
+  const [allTags, setAllTags] = useState<TagItem[]>([]);
   const [selectedTagId, setSelectedTagId] = useState('');
 
-  const getTags = useCallback((): SidebarItem[] => {
+  const getTags = useCallback((): TagItem[] => {
     return allTags;
   }, [allTags]);
 
-  const setTags = useCallback((tagsToSet: SidebarItem[]) => {
+  const setTags = useCallback((tagsToSet: TagItem[]) => {
     setAllTags(tagsToSet);
   }, []);
 
-  const addTag = useCallback((tag: SidebarItem) => {
+  const addTag = useCallback((tag: TagItem) => {
     setAllTags(state => [...state, tag]);
   }, []);
 
@@ -50,22 +48,22 @@ const SidebarProvider: React.FC = ({ children }) => {
   );
 
   return (
-    <SidebarContext.Provider
+    <TagsContext.Provider
       value={{ getTags, setTags, addTag, removeTag, selectTag, isSelected }}
     >
       {children}
-    </SidebarContext.Provider>
+    </TagsContext.Provider>
   );
 };
 
-function useSidebar(): SidebarContextData {
-  const context = useContext(SidebarContext);
+function useTags(): TagsContextData {
+  const context = useContext(TagsContext);
 
   if (!context) {
-    throw new Error('useSidebar must be used within a SidebarProvider');
+    throw new Error('useTags must be used within a TagsProvider');
   }
 
   return context;
 }
 
-export { SidebarProvider, useSidebar };
+export { TagsProvider, useTags };

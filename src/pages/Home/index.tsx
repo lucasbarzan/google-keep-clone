@@ -14,7 +14,7 @@ import {
   Notes,
   modalStyle,
 } from './styles';
-import { useSidebar } from '../../hooks/sidebar';
+import { useTags } from '../../hooks/tags';
 import { useNotes } from '../../hooks/notes';
 
 interface Note {
@@ -35,11 +35,11 @@ interface HomeParams {
 const Home: React.FC = () => {
   // const [notes, setNotes] = useState<Note[]>([]);
   const [showSidebar, setShowSidebar] = useState(false);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [noteModalIsOpen, setNoteModalIsOpen] = useState(false);
   const [openedNote, setOpenedNote] = useState({} as Note);
   Modal.setAppElement('#root');
 
-  const { setTags } = useSidebar();
+  const { setTags } = useTags();
   const { getNotes, setNotes } = useNotes();
 
   const { id: tagId } = useParams<HomeParams>();
@@ -94,16 +94,16 @@ const Home: React.FC = () => {
 
   const notes = useMemo(() => getNotes(), [getNotes]);
 
-  const openModal = useCallback(() => {
-    setModalIsOpen(true);
+  const openNoteModal = useCallback(() => {
+    setNoteModalIsOpen(true);
   }, []);
 
-  const afterOpenModal = useCallback(() => {
+  const afterOpenNoteModal = useCallback(() => {
     // ...
   }, []);
 
-  const closeModal = useCallback(() => {
-    setModalIsOpen(false);
+  const closeNoteModal = useCallback(() => {
+    setNoteModalIsOpen(false);
   }, []);
 
   const toggleSidebar = useCallback(() => {
@@ -113,15 +113,15 @@ const Home: React.FC = () => {
   const handleOpenNote = useCallback(
     (note: Note) => {
       setOpenedNote(note);
-      openModal();
+      openNoteModal();
     },
-    [openModal],
+    [openNoteModal],
   );
 
   const handleCloseNote = useCallback(() => {
     setOpenedNote({} as Note);
-    closeModal();
-  }, [closeModal]);
+    closeNoteModal();
+  }, [closeNoteModal]);
 
   return (
     <Container>
@@ -145,11 +145,11 @@ const Home: React.FC = () => {
       </Contents>
 
       <Modal
-        isOpen={modalIsOpen}
-        onAfterOpen={afterOpenModal}
-        onRequestClose={closeModal}
+        isOpen={noteModalIsOpen}
+        onAfterOpen={afterOpenNoteModal}
+        onRequestClose={closeNoteModal}
         style={modalStyle}
-        contentLabel="Example Modal"
+        contentLabel="Selected note modal"
       >
         <NoteBlock isModal note={openedNote} onCloseNote={handleCloseNote} />
       </Modal>

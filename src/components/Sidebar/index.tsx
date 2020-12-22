@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import Modal from 'react-modal';
 import {
   MdLightbulbOutline,
   MdLabelOutline,
@@ -6,17 +7,32 @@ import {
   MdArchive,
 } from 'react-icons/md';
 import { Link } from 'react-router-dom';
-import { useSidebar } from '../../hooks/sidebar';
+import { useTags } from '../../hooks/tags';
+import EditTagsModal from '../EditTagsModal';
 
-import { Container, SidebarItem } from './styles';
+import { Container, SidebarItem, modalStyle } from './styles';
 
 interface SidebarProps {
   show: boolean;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ show }) => {
-  const { getTags, isSelected, selectTag } = useSidebar();
+  const [editTagsModalIsOpen, setEditTagsModalIsOpen] = useState(false);
+
+  const { getTags, isSelected, selectTag } = useTags();
   const tags = useMemo(() => getTags(), [getTags]);
+
+  const openEditTagsModal = useCallback(() => {
+    setEditTagsModalIsOpen(true);
+  }, []);
+
+  const afterOpenEditTagsModal = useCallback(() => {
+    // ...
+  }, []);
+
+  const closeEditTagsModal = useCallback(() => {
+    setEditTagsModalIsOpen(false);
+  }, []);
 
   return (
     <Container show={show}>
@@ -44,7 +60,7 @@ const Sidebar: React.FC<SidebarProps> = ({ show }) => {
       ))}
 
       <SidebarItem
-        onClick={() => selectTag('edit_tags')}
+        onClick={() => openEditTagsModal()}
         selected={isSelected('edit_tags')}
       >
         <MdModeEdit size={24} />
@@ -66,6 +82,16 @@ const Sidebar: React.FC<SidebarProps> = ({ show }) => {
           <a href="http://lucasbarzan.com">Lucas Barzan</a>
         </strong>
       </p>
+
+      <Modal
+        isOpen={editTagsModalIsOpen}
+        onAfterOpen={afterOpenEditTagsModal}
+        onRequestClose={closeEditTagsModal}
+        style={modalStyle}
+        contentLabel="Edit tags modal"
+      >
+        <EditTagsModal />
+      </Modal>
     </Container>
   );
 };
