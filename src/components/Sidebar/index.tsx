@@ -4,7 +4,6 @@ import {
   MdLabelOutline,
   MdModeEdit,
   MdArchive,
-  MdDelete,
 } from 'react-icons/md';
 
 import { Container, SidebarItem } from './styles';
@@ -65,13 +64,6 @@ const Sidebar: React.FC<SidebarProps> = ({ show }) => {
       >
         <MdArchive size={24} />
         <span>Arquivo</span>
-      </SidebarItem>
-      <SidebarItem
-        onClick={() => setSelectedItem('trash')}
-        selected={isSelected('trash')}
-      >
-        <MdDelete size={24} />
-        <span>Lixeira</span>
       </SidebarItem>
       <p>
         Feito com ❤️ por&nbsp;

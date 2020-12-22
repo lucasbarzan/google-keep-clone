@@ -13,7 +13,7 @@ export const Container = styled.div<ContainerProps>`
 
   overflow: hidden;
   max-width: ${props => (props.show ? '28rem' : '0rem')};
-  transition: max-width 0.1s ease-in-out;
+  transition: max-width 0.12s ease-in-out;
 
   p {
     margin: auto 0 1rem 2.4rem;

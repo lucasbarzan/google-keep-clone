@@ -2,7 +2,6 @@ import styled, { css } from 'styled-components';
 
 interface ContainerProps {
   isFocused: boolean;
-  isFilled: boolean;
   hasFocusedBefore: boolean;
 }
 

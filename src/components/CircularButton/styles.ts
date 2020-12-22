@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 interface ContainerProps {
-  hoverColor: string;
   containerSize: number;
   visibility: string;
 }
@@ -18,7 +17,12 @@ export const Container = styled.button<ContainerProps>`
   border-radius: 50%;
   visibility: ${props => props.visibility};
 
+  svg {
+    color: #202124;
+  }
+
   &:hover {
-    background-color: ${props => props.hoverColor};
+    opacity: 0.87;
+    background-color: rgba(95, 99, 104, 0.157);
   }
 `;

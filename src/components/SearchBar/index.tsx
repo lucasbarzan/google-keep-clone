@@ -1,26 +1,26 @@
 import React, {
   useState,
-  useEffect,
   useCallback,
-  useRef,
   InputHTMLAttributes,
+  ChangeEvent,
 } from 'react';
-import { useField } from '@unform/core';
 import { MdSearch, MdClose } from 'react-icons/md';
 
 import CircularButton from '../CircularButton';
 import { Container } from './styles';
 
 interface SearchBarProps extends InputHTMLAttributes<HTMLInputElement> {
-  name: string;
+  onSearch(query: string): void;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ name, ...rest }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch, ...rest }) => {
+  const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const [isFilled, setIsFilled] = useState(false);
   const [hasFocusedBefore, setHasFocusedBefore] = useState(false);
-  const { fieldName, defaultValue, error, registerField } = useField(name);
+
+  const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+  }, []);
 
   const handleInputFocus = useCallback(() => {
     setIsFocused(true);
@@ -29,32 +29,31 @@ const SearchBar: React.FC<SearchBarProps> = ({ name, ...rest }) => {
 
   const handleInputBlur = useCallback(() => {
     setIsFocused(false);
-
-    setIsFilled(!!inputRef.current?.value);
   }, []);
 
-  useEffect(() => {
-    registerField({
-      name: fieldName,
-      ref: inputRef.current,
-      path: 'value',
-    });
-  }, [fieldName, registerField]);
+  const handleInputKeyDown = useCallback(
+    e => {
+      if (e.keyCode === 13) {
+        onSearch(query);
+      }
+    },
+    [onSearch, query],
+  );
+
+  const handleClear = useCallback(() => {
+    setQuery('');
+  }, []);
 
   return (
-    <Container
-      isFilled={isFilled}
-      isFocused={isFocused}
-      hasFocusedBefore={hasFocusedBefore}
-    >
+    <Container isFocused={isFocused} hasFocusedBefore={hasFocusedBefore}>
       <CircularButton icon={MdSearch} hoverColor="#e3e5e6" containerSize={4} />
       <input
         type="text"
         placeholder="Pesquisar"
+        onChange={handleInputChange}
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
-        defaultValue={defaultValue}
-        ref={inputRef}
+        onKeyDown={handleInputKeyDown}
         {...rest}
       />
       <CircularButton
@@ -62,6 +61,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ name, ...rest }) => {
         hoverColor="#e3e5e6"
         containerSize={4}
         visibility={hasFocusedBefore ? 'visible' : 'hidden'}
+        onClick={handleClear}
       />
     </Container>
   );

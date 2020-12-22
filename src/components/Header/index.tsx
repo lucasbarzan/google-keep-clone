@@ -1,6 +1,4 @@
-import React, { useCallback, useRef } from 'react';
-import { Form } from '@unform/web';
-import { FormHandles } from '@unform/core';
+import React from 'react';
 import { MdMenu } from 'react-icons/md';
 
 import CircularButton from '../CircularButton';
@@ -8,30 +6,18 @@ import SearchBar from '../SearchBar';
 import Logo from '../../assets/logo.png';
 import { Container } from './styles';
 
-interface SearchFormData {
-  search: string;
-}
-
 interface HeaderProps {
   onToggleSidebar(): void;
+  onSearch(query: string): void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
-  const formRef = useRef<FormHandles>(null);
-
-  const handleSearch = useCallback((data: SearchFormData) => {
-    const { search } = data;
-    console.log(search);
-  }, []);
-
+const Header: React.FC<HeaderProps> = ({ onToggleSidebar, onSearch }) => {
   return (
     <Container>
       <CircularButton icon={MdMenu} onClick={() => onToggleSidebar()} />
       <img src={Logo} alt="Google Keep Clone Logo" />
       <h1>Keep Clone</h1>
-      <Form ref={formRef} onSubmit={handleSearch}>
-        <SearchBar name="search" />
-      </Form>
+      <SearchBar name="search" onSearch={onSearch} />
     </Container>
   );
 };

@@ -16,14 +16,12 @@ const CircularButton: React.FC<CircularButtonProps> = ({
   icon: Icon,
   iconSize = 24,
   containerSize = 4.8,
-  hoverColor = '#f0f0f0',
   visibility = 'visible',
   onClick,
 }) => {
   return (
     <Container
       containerSize={containerSize}
-      hoverColor={hoverColor}
       type="button"
       visibility={visibility}
       onClick={onClick}
