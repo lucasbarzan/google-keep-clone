@@ -1,33 +1,31 @@
 import React, { createContext, useState, useCallback, useContext } from 'react';
 
-export interface NoteItem {
+interface Note {
   id: string;
   title: string;
   body: string;
   color: number;
-  // tags: Tag[];
+  tag?: {
+    id: string;
+    name: string;
+  };
 }
 
 interface NotesContextData {
-  getNotes(): NoteItem[];
-  setNotes(notes: NoteItem[]): void;
-  addNote(note: NoteItem): void;
+  getNotes(): Note[];
+  setNotes(notes: Note[]): void;
+  addNote(note: Note): void;
   updateNoteColor(id: string, color: number): void;
-  updateNote(note: NoteItem): void;
+  updateNote(note: Note): void;
   removeNote(id: string): void;
-
-  // setSearchNotes(notes: NoteItem[]): void;
 }
 
 const NotesContext = createContext<NotesContextData>({} as NotesContextData);
 
 const NotesProvider: React.FC = ({ children }) => {
-  const [allNotes, setAllNotes] = useState<NoteItem[]>([]);
-  // const [filteredNotes, setFilteredNotes] = useState<NoteItem[]>([]);
+  const [allNotes, setAllNotes] = useState<Note[]>([]);
 
-  // All notes functions
-
-  const getNotes = useCallback((): NoteItem[] => {
+  const getNotes = useCallback((): Note[] => {
     return allNotes;
   }, [allNotes]);
 
@@ -42,7 +40,7 @@ const NotesProvider: React.FC = ({ children }) => {
   );
 
   const updateNote = useCallback(
-    (note: NoteItem) => {
+    (note: Note) => {
       const updatedNotes = [...allNotes];
       const noteIndex = updatedNotes.findIndex(
         noteItem => noteItem.id === note.id,
@@ -53,27 +51,17 @@ const NotesProvider: React.FC = ({ children }) => {
     [allNotes],
   );
 
-  const setNotes = useCallback((notes: NoteItem[]) => {
+  const setNotes = useCallback((notes: Note[]) => {
     setAllNotes(notes);
   }, []);
 
-  const addNote = useCallback((note: NoteItem) => {
+  const addNote = useCallback((note: Note) => {
     setAllNotes(state => [...state, note]);
   }, []);
 
   const removeNote = useCallback((id: string) => {
-    setAllNotes(state => state.filter(noteItem => noteItem.id !== id));
+    setAllNotes(state => state.filter(note => note.id !== id));
   }, []);
-
-  // Filtered notes functions
-
-  // const setSearchNotes = useCallback((notes: NoteItem[]) => {
-  //   setFilteredNotes(notes);
-  // }, []);
-
-  // const getSearchNotes = useCallback((): NoteItem[] => {
-  //   return filteredNotes;
-  // }, [filteredNotes]);
 
   return (
     <NotesContext.Provider
@@ -84,8 +72,6 @@ const NotesProvider: React.FC = ({ children }) => {
         updateNoteColor,
         updateNote,
         removeNote,
-        // getSearchNotes,
-        // setSearchNotes,
       }}
     >
       {children}

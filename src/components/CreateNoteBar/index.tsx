@@ -9,6 +9,10 @@ interface Note {
   title: string;
   body: string;
   color: number;
+  tag?: {
+    id: string;
+    name: string;
+  };
 }
 
 const CreateNoteBar: React.FC = () => {
@@ -19,8 +23,8 @@ const CreateNoteBar: React.FC = () => {
   const { addNote } = useNotes();
 
   const handleAddNote = useCallback(
-    (note: Omit<Note, 'id' | 'color'>) => {
-      addNote({ ...note, color: 0, id: '0' });
+    (note: Omit<Note, 'id' | 'color' | 'tag'>) => {
+      addNote({ ...note, color: 0, id: '0', tag: undefined });
     },
     [addNote],
   );

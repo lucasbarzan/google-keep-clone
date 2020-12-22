@@ -3,20 +3,22 @@ import React, {
   useCallback,
   InputHTMLAttributes,
   ChangeEvent,
+  useMemo,
 } from 'react';
 import { MdSearch, MdClose } from 'react-icons/md';
+import { useNotes } from '../../hooks/notes';
 
 import CircularButton from '../CircularButton';
 import { Container } from './styles';
 
-interface SearchBarProps extends InputHTMLAttributes<HTMLInputElement> {
-  onSearch(query: string): void;
-}
-
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch, ...rest }) => {
+const SearchBar: React.FC<InputHTMLAttributes<HTMLInputElement>> = () => {
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [hasFocusedBefore, setHasFocusedBefore] = useState(false);
+
+  const { getNotes, setNotes } = useNotes();
+
+  const notes = useMemo(() => getNotes(), [getNotes]);
 
   const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
@@ -31,20 +33,28 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, ...rest }) => {
     setIsFocused(false);
   }, []);
 
+  const handleSearch = useCallback(
+    (queryOptional?: string) => {
+      const searchNotes = notes.filter(note => note.title === query);
+      setNotes(searchNotes);
+    },
+    [notes, query, setNotes],
+  );
+
   const handleInputKeyDown = useCallback(
     e => {
       if (e.keyCode === 13) {
-        onSearch(query);
+        handleSearch();
       }
     },
-    [onSearch, query],
+    [handleSearch],
   );
 
   const handleClear = useCallback(() => {
     setQuery('');
 
-    onSearch('');
-  }, [onSearch]);
+    handleSearch('');
+  }, [handleSearch]);
 
   return (
     <Container isFocused={isFocused} hasFocusedBefore={hasFocusedBefore}>
@@ -57,7 +67,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, ...rest }) => {
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
         onKeyDown={handleInputKeyDown}
-        {...rest}
       />
       <CircularButton
         icon={MdClose}

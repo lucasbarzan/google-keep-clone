@@ -9,10 +9,9 @@ import { Container } from './styles';
 
 interface HeaderProps {
   onToggleSidebar(): void;
-  onSearch(query: string): void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onToggleSidebar, onSearch }) => {
+const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
   return (
     <Container>
       <CircularButton icon={MdMenu} onClick={() => onToggleSidebar()} />
@@ -20,7 +19,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleSidebar, onSearch }) => {
         <img src={Logo} alt="Google Keep Clone Logo" />
         <h1>Keep Clone</h1>
       </Link>
-      <SearchBar name="search" onSearch={onSearch} />
+      <SearchBar name="search" />
     </Container>
   );
 };

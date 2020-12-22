@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Modal from 'react-modal';
+import { useParams } from 'react-router-dom';
 import CreateNoteBar from '../../components/CreateNoteBar';
 import Header from '../../components/Header';
 import Sidebar from '../../components/Sidebar';
@@ -21,6 +22,14 @@ interface Note {
   title: string;
   body: string;
   color: number;
+  tag?: {
+    id: string;
+    name: string;
+  };
+}
+
+interface HomeParams {
+  id: string;
 }
 
 const Home: React.FC = () => {
@@ -31,29 +40,57 @@ const Home: React.FC = () => {
   Modal.setAppElement('#root');
 
   const { setTags } = useSidebar();
-  const {
-    getNotes,
-    setNotes,
-    updateNoteColor,
-    updateNote,
-    removeNote,
-  } = useNotes();
+  const { getNotes, setNotes } = useNotes();
+
+  const { id: tagId } = useParams<HomeParams>();
 
   useEffect(() => {
-    setNotes([
-      { id: '1', title: 'title 1', body: 'body 1', color: 0 },
-      { id: '2', title: 'title 2', body: 'body 2', color: 2 },
-      { id: '3', title: 'title 3', body: 'body 3', color: 0 },
-      { id: '4', title: 'title 4', body: 'body 4', color: 4 },
-      { id: '5', title: 'title 5', body: 'body 5', color: 0 },
-    ]);
+    setNotes(
+      [
+        {
+          id: '1',
+          title: 'title 1',
+          body: 'body 1',
+          color: 0,
+          tag: { id: '1', name: 'tag 1' },
+        },
+        {
+          id: '2',
+          title: 'title 2',
+          body: 'body 2',
+          color: 2,
+          tag: { id: '1', name: 'tag 1' },
+        },
+        {
+          id: '3',
+          title: 'title 3',
+          body: 'body 3',
+          color: 0,
+          tag: { id: '2', name: 'tag 2' },
+        },
+        {
+          id: '4',
+          title: 'title 4',
+          body: 'body 4',
+          color: 4,
+          tag: { id: '2', name: 'tag 2' },
+        },
+        {
+          id: '5',
+          title: 'title 5',
+          body: 'body 5',
+          color: 0,
+          tag: { id: '3', name: 'tag 3' },
+        },
+      ].filter(n => (tagId ? n.tag.id === tagId : true)),
+    );
 
     setTags([
       { id: '1', name: 'tag 1' },
       { id: '2', name: 'tag 2' },
       { id: '3', name: 'tag 3' },
     ]);
-  }, [setNotes, setTags]);
+  }, [setNotes, setTags, tagId]);
 
   const notes = useMemo(() => getNotes(), [getNotes]);
 
@@ -73,25 +110,6 @@ const Home: React.FC = () => {
     setShowSidebar(!showSidebar);
   }, [showSidebar]);
 
-  const handleSearch = useCallback(
-    (query: string) => {
-      const searchNotes = notes.filter(note => note.title === query);
-      setNotes(searchNotes);
-
-      // Close modal
-      setOpenedNote({} as Note);
-      closeModal();
-    },
-    [closeModal, notes, setNotes],
-  );
-
-  const handleUpdateNoteColor = useCallback(
-    (id: string, color: number) => {
-      updateNoteColor(id, color);
-    },
-    [updateNoteColor],
-  );
-
   const handleOpenNote = useCallback(
     (note: Note) => {
       setOpenedNote(note);
@@ -100,45 +118,14 @@ const Home: React.FC = () => {
     [openModal],
   );
 
-  const handleCloseAndSaveNote = useCallback(
-    (note: Note) => {
-      // Update note
-      updateNote(note);
-
-      // Close modal
-      setOpenedNote({} as Note);
-      closeModal();
-    },
-    [closeModal, updateNote],
-  );
-
-  const handleArchiveNote = useCallback(
-    (note: Note) => {
-      // Archive note
-      removeNote(note.id);
-
-      // Close modal
-      setOpenedNote({} as Note);
-      closeModal();
-    },
-    [closeModal, removeNote],
-  );
-
-  const deleteNote = useCallback(
-    (note: Note) => {
-      // Delete note
-      removeNote(note.id);
-
-      // Close modal
-      setOpenedNote({} as Note);
-      closeModal();
-    },
-    [closeModal, removeNote],
-  );
+  const handleCloseNote = useCallback(() => {
+    setOpenedNote({} as Note);
+    closeModal();
+  }, [closeModal]);
 
   return (
     <Container>
-      <Header onSearch={handleSearch} onToggleSidebar={toggleSidebar} />
+      <Header onToggleSidebar={toggleSidebar} />
       <Contents>
         <Sidebar show={showSidebar} />
         <BarAndNotes>
@@ -150,10 +137,7 @@ const Home: React.FC = () => {
               <NoteBlock
                 key={note.id}
                 note={note}
-                onUpdateNoteColor={handleUpdateNoteColor}
                 onOpenNote={handleOpenNote}
-                onArchiveNote={handleArchiveNote}
-                onDeleteNote={deleteNote}
               />
             ))}
           </Notes>
@@ -167,14 +151,7 @@ const Home: React.FC = () => {
         style={modalStyle}
         contentLabel="Example Modal"
       >
-        <NoteBlock
-          note={openedNote}
-          onUpdateNoteColor={handleUpdateNoteColor}
-          onCloseAndSaveNote={handleCloseAndSaveNote}
-          onArchiveNote={handleArchiveNote}
-          onDeleteNote={deleteNote}
-          isModal
-        />
+        <NoteBlock isModal note={openedNote} onCloseNote={handleCloseNote} />
       </Modal>
     </Container>
   );
