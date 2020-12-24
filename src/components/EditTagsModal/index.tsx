@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { MdDelete, MdCheck } from 'react-icons/md';
 import { useTags } from '../../hooks/tags';
 import CircularButton from '../CircularButton';
@@ -10,14 +10,40 @@ export interface Tag {
   name: string;
 }
 
-const EditTagsModal: React.FC = () => {
-  const { getTags } = useTags();
+interface EditTagsModalProps {
+  onCloseModal: () => void;
+}
+
+const EditTagsModal: React.FC<EditTagsModalProps> = ({ onCloseModal }) => {
+  // tempTags = { tagId: tagName }
+  const [tempTags, setTempTags] = useState<{ [key: string]: string }>({});
+
+  const { getTags, updateTag, removeTag } = useTags();
 
   const tags = useMemo(() => getTags(), [getTags]);
 
-  const handleSaveTag = useCallback((tag: Tag) => {
-    console.log(tag);
-  }, []);
+  const handleInputTagName = useCallback(
+    (e, tagId: string) => {
+      const updatedTempTags = { ...tempTags };
+      updatedTempTags[tagId] = e.target.value;
+      setTempTags(updatedTempTags);
+    },
+    [tempTags],
+  );
+
+  const handleSaveTag = useCallback(
+    (tag: Tag) => {
+      updateTag(tag);
+    },
+    [updateTag],
+  );
+
+  const handleDeleteTag = useCallback(
+    (tagId: string) => {
+      removeTag(tagId);
+    },
+    [removeTag],
+  );
 
   return (
     <Container>
@@ -36,18 +62,25 @@ const EditTagsModal: React.FC = () => {
             icon={MdDelete}
             iconSize={iconSize}
             containerSize={containerSize}
+            onClick={() => handleDeleteTag(tag.id)}
           />
-          <span contentEditable>{tag.name}</span>
+          <input
+            type="text"
+            value={tempTags[tag.id] || tag.name}
+            onChange={e => handleInputTagName(e, tag.id)}
+          />
           <CircularButton
             id="check"
             icon={MdCheck}
             iconSize={iconSize}
             containerSize={containerSize}
-            onClick={() => handleSaveTag(tag.id)}
+            onClick={() => handleSaveTag({ ...tag, name: tempTags[tag.id] })}
           />
         </TagItem>
       ))}
-      <button type="button">Concluído</button>
+      <button type="button" onClick={onCloseModal}>
+        Concluído
+      </button>
     </Container>
   );
 };

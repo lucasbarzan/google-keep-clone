@@ -8,6 +8,7 @@ export interface TagItem {
 interface TagsContextData {
   getTags(): TagItem[];
   addTag(tag: TagItem): void;
+  updateTag(tag: TagItem): void;
   setTags(tags: TagItem[]): void;
   removeTag(id: string): void;
   selectTag(id: string): void;
@@ -32,6 +33,16 @@ const TagsProvider: React.FC = ({ children }) => {
     setAllTags(state => [...state, tag]);
   }, []);
 
+  const updateTag = useCallback(
+    (tag: TagItem) => {
+      const updatedTags = [...allTags];
+      const tagIndex = updatedTags.findIndex(tagItem => tagItem.id === tag.id);
+      updatedTags[tagIndex] = tag;
+      setAllTags(updatedTags);
+    },
+    [allTags],
+  );
+
   const removeTag = useCallback((id: string) => {
     setAllTags(state => state.filter(tagItem => tagItem.id !== id));
   }, []);
@@ -49,7 +60,15 @@ const TagsProvider: React.FC = ({ children }) => {
 
   return (
     <TagsContext.Provider
-      value={{ getTags, setTags, addTag, removeTag, selectTag, isSelected }}
+      value={{
+        getTags,
+        setTags,
+        addTag,
+        updateTag,
+        removeTag,
+        selectTag,
+        isSelected,
+      }}
     >
       {children}
     </TagsContext.Provider>

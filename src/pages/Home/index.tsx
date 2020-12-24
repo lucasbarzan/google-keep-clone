@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Modal from 'react-modal';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import CreateNoteBar from '../../components/CreateNoteBar';
 import Header from '../../components/Header';
 import Sidebar from '../../components/Sidebar';
@@ -33,20 +33,85 @@ interface HomeParams {
 }
 
 const Home: React.FC = () => {
-  // const [notes, setNotes] = useState<Note[]>([]);
   const [showSidebar, setShowSidebar] = useState(false);
   const [noteModalIsOpen, setNoteModalIsOpen] = useState(false);
   const [openedNote, setOpenedNote] = useState({} as Note);
   Modal.setAppElement('#root');
 
-  const { setTags } = useTags();
+  const { setTags, selectTag } = useTags();
   const { getNotes, setNotes } = useNotes();
 
   const { id: tagId } = useParams<HomeParams>();
+  const { pathname } = useLocation();
 
   useEffect(() => {
-    setNotes(
-      [
+    if (pathname === '/archive') {
+      // Archive page
+      selectTag('archive');
+      setNotes([
+        {
+          id: '1',
+          title: 'title 1',
+          body: 'body 1',
+          color: 8,
+          tag: { id: '1', name: 'tag 1' },
+        },
+        {
+          id: '2',
+          title: 'title 2',
+          body: 'body 2',
+          color: 9,
+          tag: { id: '1', name: 'tag 1' },
+        },
+      ]);
+    } else if (tagId) {
+      // Tag page
+      selectTag(tagId);
+
+      setNotes(
+        [
+          {
+            id: '1',
+            title: 'title 1',
+            body: 'body 1',
+            color: 0,
+            tag: { id: '1', name: 'tag 1' },
+          },
+          {
+            id: '2',
+            title: 'title 2',
+            body: 'body 2',
+            color: 2,
+            tag: { id: '1', name: 'tag 1' },
+          },
+          {
+            id: '3',
+            title: 'title 3',
+            body: 'body 3',
+            color: 0,
+            tag: { id: '2', name: 'tag 2' },
+          },
+          {
+            id: '4',
+            title: 'title 4',
+            body: 'body 4',
+            color: 4,
+            tag: { id: '2', name: 'tag 2' },
+          },
+          {
+            id: '5',
+            title: 'title 5',
+            body: 'body 5',
+            color: 0,
+            tag: { id: '3', name: 'tag 3' },
+          },
+        ].filter(n => n.tag.id === tagId),
+      );
+    } else {
+      // Home page
+      selectTag('notes');
+
+      setNotes([
         {
           id: '1',
           title: 'title 1',
@@ -82,15 +147,15 @@ const Home: React.FC = () => {
           color: 0,
           tag: { id: '3', name: 'tag 3' },
         },
-      ].filter(n => (tagId ? n.tag.id === tagId : true)),
-    );
+      ]);
+    }
 
     setTags([
       { id: '1', name: 'tag 1' },
       { id: '2', name: 'tag 2' },
       { id: '3', name: 'tag 3' },
     ]);
-  }, [setNotes, setTags, tagId]);
+  }, [pathname, setNotes, setTags, tagId]);
 
   const notes = useMemo(() => getNotes(), [getNotes]);
 

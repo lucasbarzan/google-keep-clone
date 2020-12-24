@@ -60,7 +60,7 @@ export const TagItem = styled.div`
   align-items: center;
   margin: 1rem 0;
 
-  span {
+  input {
     width: 100%;
     font-family: 'Roboto';
     font-size: 1.4rem;

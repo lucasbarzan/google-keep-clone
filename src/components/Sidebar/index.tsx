@@ -47,9 +47,8 @@ const Sidebar: React.FC<SidebarProps> = ({ show }) => {
       </Link>
 
       {tags.map(tag => (
-        <Link to={`/tags/${tag.id}`}>
+        <Link to={`/tags/${tag.id}`} key={tag.id}>
           <SidebarItem
-            key={tag.id}
             onClick={() => selectTag(tag.id)}
             selected={isSelected(tag.id)}
           >
@@ -90,7 +89,7 @@ const Sidebar: React.FC<SidebarProps> = ({ show }) => {
         style={modalStyle}
         contentLabel="Edit tags modal"
       >
-        <EditTagsModal />
+        <EditTagsModal onCloseModal={closeEditTagsModal} />
       </Modal>
     </Container>
   );
