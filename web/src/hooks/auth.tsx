@@ -35,7 +35,7 @@ const AuthProvider: React.FC = ({ children }) => {
     const user = localStorage.getItem('@KeepClone:user');
 
     if (token && user) {
-      api.defaults.headers['x-access-token'] = token;
+      api.defaults.headers.authorization = `Bearer ${token}`;
 
       return { token, user: JSON.parse(user) };
     }
@@ -55,7 +55,7 @@ const AuthProvider: React.FC = ({ children }) => {
       localStorage.setItem('@KeepClone:token', token);
       localStorage.setItem('@KeepClone:user', JSON.stringify(user));
 
-      api.defaults.headers['x-access-token'] = token;
+      api.defaults.headers.authorization = `Bearer ${token}`;
 
       setData({ token, user });
     },
