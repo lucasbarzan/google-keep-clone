@@ -24,7 +24,7 @@ tagsRouter.post(
   tagsController.create,
 );
 
-tagsRouter.put(
+tagsRouter.patch(
   '/:id',
   celebrate({
     [Segments.PARAMS]: {

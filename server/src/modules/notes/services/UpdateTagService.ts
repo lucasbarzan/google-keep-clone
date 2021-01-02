@@ -7,7 +7,7 @@ import AppError from '@shared/errors/AppError';
 interface IRequest {
   user_id: string;
   id: string;
-  name: string;
+  name?: string;
 }
 
 @injectable()
@@ -23,7 +23,7 @@ class UpdateTagService {
 
     if (tag.user_id !== user_id) throw new AppError('You cannot update this tag.', 403);
 
-    tag.name = name;
+    if (name) tag.name = name;
 
     await this.tagsRepository.save(tag);
 
