@@ -13,17 +13,27 @@ export default class CreateNotes1609592066731 implements MigrationInterface {
             generationStrategy: 'uuid',
           },
           {
+            name: 'user_id',
+            type: 'varchar',
+            isNullable: true,
+          },
+          {
             name: 'title',
             type: 'varchar',
           },
           {
             name: 'body',
-            type: 'varchar',
+            type: 'text',
             isNullable: false,
           },
           {
             name: 'color',
-            type: 'tyniint',
+            type: 'tinyint',
+            isNullable: false,
+          },
+          {
+            name: 'status',
+            type: 'tinyint',
             isNullable: false,
           },
           {
@@ -35,6 +45,16 @@ export default class CreateNotes1609592066731 implements MigrationInterface {
             name: 'updated_at',
             type: 'timestamp',
             default: 'now()',
+          },
+        ],
+        foreignKeys: [
+          {
+            name: 'NoteUser',
+            columnNames: ['user_id'],
+            referencedColumnNames: ['id'],
+            referencedTableName: 'users',
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE',
           },
         ],
       }),

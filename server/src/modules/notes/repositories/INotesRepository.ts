@@ -3,6 +3,7 @@ import ICreateNoteDTO from '../dtos/ICreateNoteDTO';
 import IFindAllNotesDTO from '../dtos/IFindAllNotesDTO';
 
 export default interface INotesRepository {
+  findById(id: string): Promise<Note | undefined>;
   findAll(data: IFindAllNotesDTO): Promise<Note[]>;
   create(data: ICreateNoteDTO): Promise<Note>;
   save(note: Note): Promise<Note>;

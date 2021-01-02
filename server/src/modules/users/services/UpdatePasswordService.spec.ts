@@ -21,13 +21,13 @@ describe('UpdatePassword', () => {
 
   it('should be able to update password', async () => {
     const user = await fakeUsersRepository.create({
-      email: 'johndoe@example.com',
+      email: 'user@email.com',
       password: '123456',
     });
 
     const updatedUser = await updatePassword.execute({
       user_id: user.id,
-      old_password: '123456',
+      old_password: user.password,
       password: '654321'
     });
 
@@ -39,6 +39,21 @@ describe('UpdatePassword', () => {
       updatePassword.execute({
         user_id: 'non-existent-user-id',
         old_password: '123456',
+        password: '654321'
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+  });
+
+  it("should not be able to update password if old password does not match", async () => {
+    const user = await fakeUsersRepository.create({
+      email: 'user@email.com',
+      password: '123456',
+    });
+
+    await expect(
+      updatePassword.execute({
+        user_id: user.id,
+        old_password: 'not-old-password',
         password: '654321'
       }),
     ).rejects.toBeInstanceOf(AppError);

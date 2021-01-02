@@ -1,4 +1,4 @@
-import { getRepository, Repository, Not } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 
 import INotesRepository from '@modules/notes/repositories/INotesRepository';
 import ICreateNoteDTO from '@modules/notes/dtos/ICreateNoteDTO';
@@ -12,13 +12,41 @@ class NotesRepository implements INotesRepository {
     this.ormRepository = getRepository(Note);
   }
 
-  public async findAll({ tag, query }: IFindAllNotesDTO): Promise<Note[]> {
-    // TODO: LIKE query
-    const notes = await this.ormRepository.find({
-      where: {
-        tag,
-      }
-    });
+  public async findById(id: string): Promise<Note | undefined> {
+    const note = await this.ormRepository.findOne(id);
+
+    return note;
+  }
+
+  public async findAll({ user_id, tag, query, status }: IFindAllNotesDTO): Promise<Note[]> {
+    let dbQuery = this.ormRepository
+      .createQueryBuilder('note');
+
+    dbQuery = dbQuery
+      .where('note.status = :status', {
+        status,
+      })
+      .andWhere('note.user_id = :user_id', {
+        user_id,
+      });
+
+    if (tag) {
+      dbQuery = dbQuery
+        .andWhere('note.tag = :tag', {
+          tag,
+        });
+    }
+
+    if (query) {
+      dbQuery = dbQuery
+        .andWhere('(note.title LIKE :query OR note.body LIKE :query)', {
+          query: `%${query}%`,
+        });
+    }
+
+    const notes = await dbQuery
+      .orderBy('note.created_at', 'DESC')
+      .getMany();
 
     return notes;
   }

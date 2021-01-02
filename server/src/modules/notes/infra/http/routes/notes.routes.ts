@@ -4,10 +4,18 @@ import { celebrate, Segments, Joi } from 'celebrate';
 import NotesController from '../controllers/NotesController';
 import ArchivedNotesController from '../controllers/ArchivedNotesController';
 import ensureAuthenticated from '@shared/infra/http/middlewares/ensureAuthenticated';
+import NoteStatus from '@modules/notes/dtos/NoteStatus';
+import NoteColors from '@modules/notes/dtos/NoteColors';
 
 const notesRouter = Router();
 const notesController = new NotesController();
 const archivedNotesController = new ArchivedNotesController();
+
+function getEnumValues(enumObj: any) {
+  const keys = Object.keys(enumObj);
+  const values = keys.map(key => enumObj[key]).filter(v => typeof(v) === 'number');
+  return values;
+}
 
 notesRouter.use(ensureAuthenticated);
 
@@ -17,6 +25,7 @@ notesRouter.get(
     [Segments.QUERY]: {
       tag: Joi.string().uuid(),
       query: Joi.string(),
+      status: Joi.number().valid(...getEnumValues(NoteStatus)).required(),
     },
   }),
   notesController.index,
@@ -28,7 +37,7 @@ notesRouter.post(
     [Segments.BODY]: {
       title: Joi.string(),
       body: Joi.string().required(),
-      color: Joi.number().required(),
+      color: Joi.number().valid(...getEnumValues(NoteColors)).required(),
     },
   }),
   notesController.create,
@@ -43,7 +52,7 @@ notesRouter.put(
     [Segments.BODY]: {
       title: Joi.string(),
       body: Joi.string().required(),
-      color: Joi.number().required(),
+      color: Joi.number().valid(...getEnumValues(NoteColors)).required(),
     },
   }),
   notesController.update,
@@ -78,5 +87,5 @@ notesRouter.delete(
   }),
   archivedNotesController.destroy,
 );
-    
+
 export default notesRouter;

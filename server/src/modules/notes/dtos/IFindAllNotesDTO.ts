@@ -1,4 +1,8 @@
+import NoteStatus from "./NoteStatus";
+
 export default interface ICreateNoteDTO {
-  tag: string;
-  query: string;
+  user_id: string;
+  tag?: string;
+  query?: string;
+  status: NoteStatus;
 }

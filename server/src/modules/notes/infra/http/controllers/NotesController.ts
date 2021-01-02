@@ -9,15 +9,16 @@ import { classToClass } from 'class-transformer';
 
 export default class NotesController {
   public async index(request: Request, response: Response): Promise<Response> {
-    const { tag, query } = request.query;
+    const { tag, query, status } = request.query;
     const { id: user_id } = request.user;
 
     const listNotes = container.resolve(ListNotesService);
 
     const notes = await listNotes.execute({
       user_id,
-      tag,
-      query,
+      tag: tag ? String(tag) : undefined,
+      query: query ? String(query) : undefined,
+      status: Number(status),
     });
 
     return response.json(classToClass(notes));
@@ -41,6 +42,7 @@ export default class NotesController {
 
   public async update(request: Request, response: Response): Promise<Response> {
     const { id } = request.params;
+    const { title, body, color } = request.body;
     const { id: user_id } = request.user;
 
     const updateNote = container.resolve(UpdateNoteService);
