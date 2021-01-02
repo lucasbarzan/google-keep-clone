@@ -4,7 +4,7 @@ import { celebrate, Segments, Joi } from 'celebrate';
 import PasswordController from '../controllers/PasswordController';
 import ForgotPasswordController from '../controllers/ForgotPasswordController';
 import ResetPasswordController from '../controllers/ResetPasswordController';
-import ensureAuthenticated from '../middlewares/ensureAuthenticated';
+import ensureAuthenticated from '@shared/infra/http/middlewares/ensureAuthenticated';
 
 const passwordRouter = Router();
 const passwordController = new PasswordController();
