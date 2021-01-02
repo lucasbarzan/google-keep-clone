@@ -25,7 +25,7 @@ export default class NotesController {
   }
 
   public async create(request: Request, response: Response): Promise<Response> {
-    const { title, body, color } = request.body;
+    const { title, body, color, tag_id } = request.body;
     const { id: user_id } = request.user;
 
     const createNote = container.resolve(CreateNoteService);
@@ -35,6 +35,7 @@ export default class NotesController {
       title,
       body,
       color,
+      tag_id,
     });
 
     return response.json(classToClass(note));
@@ -42,7 +43,7 @@ export default class NotesController {
 
   public async update(request: Request, response: Response): Promise<Response> {
     const { id } = request.params;
-    const { title, body, color } = request.body;
+    const { title, body, color, tag_id } = request.body;
     const { id: user_id } = request.user;
 
     const updateNote = container.resolve(UpdateNoteService);
@@ -53,6 +54,7 @@ export default class NotesController {
       title,
       body,
       color,
+      tag_id,
     });
 
     return response.json(classToClass(updatedNote));

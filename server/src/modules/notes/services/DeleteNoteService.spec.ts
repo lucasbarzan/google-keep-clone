@@ -1,9 +1,9 @@
-import AppError from '@shared/errors/AppError';
-import NoteColors from '../dtos/NoteColors';
-import FakeNotesRepository from '../repositories/fakes/FakeNotesRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
+import FakeNotesRepository from '../repositories/fakes/FakeNotesRepository';
 import DeleteNoteService from './DeleteNoteService';
+import NoteColors from '../dtos/NoteColors';
 import NoteStatus from '../dtos/NoteStatus';
+import AppError from '@shared/errors/AppError';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeNotesRepository: FakeNotesRepository;

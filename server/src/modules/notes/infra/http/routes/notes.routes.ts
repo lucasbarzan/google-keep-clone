@@ -35,24 +35,26 @@ notesRouter.post(
   '/',
   celebrate({
     [Segments.BODY]: {
-      title: Joi.string(),
+      title: Joi.string().allow(''),
       body: Joi.string().required(),
       color: Joi.number().valid(...getEnumValues(NoteColors)).required(),
+      tag_id: Joi.string(),
     },
   }),
   notesController.create,
 );
 
-notesRouter.put(
+notesRouter.patch(
   '/:id',
   celebrate({
     [Segments.PARAMS]: {
       id: Joi.string().uuid().required(),
     },
     [Segments.BODY]: {
-      title: Joi.string(),
-      body: Joi.string().required(),
-      color: Joi.number().valid(...getEnumValues(NoteColors)).required(),
+      title: Joi.string().allow(''),
+      body: Joi.string(),
+      color: Joi.number().valid(...getEnumValues(NoteColors)),
+      tag_id: Joi.string(),
     },
   }),
   notesController.update,

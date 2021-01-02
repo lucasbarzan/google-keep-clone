@@ -7,7 +7,10 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import Tag from './Tag';
 
 @Entity('notes')
 class Note {
@@ -31,9 +34,13 @@ class Note {
   @Column({ enum: NoteColors })
   color: number;
 
-  // TODO: Add tag field
-  // @Column('uuid')
-  // tag: string;
+  @ManyToOne(() => Tag)
+  @JoinColumn({ name: 'tag_id' })
+  tag: Tag;
+
+  @Exclude()
+  @Column('uuid')
+  tag_id: string;
 
   @Column({ enum: NoteStatus })
   status: number;

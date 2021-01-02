@@ -6,5 +6,6 @@ export default interface ICreateNoteDTO {
   title: string;
   body: string;
   color: NoteColors;
+  tag_id?: string;
   status: NoteStatus;
 }

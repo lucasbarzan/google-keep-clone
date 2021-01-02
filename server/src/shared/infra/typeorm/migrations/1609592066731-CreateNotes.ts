@@ -14,7 +14,12 @@ export default class CreateNotes1609592066731 implements MigrationInterface {
           },
           {
             name: 'user_id',
-            type: 'varchar',
+            type: 'varchar(36)',
+            isNullable: true,
+          },
+          {
+            name: 'tag_id',
+            type: 'varchar(36)',
             isNullable: true,
           },
           {
@@ -54,6 +59,14 @@ export default class CreateNotes1609592066731 implements MigrationInterface {
             referencedColumnNames: ['id'],
             referencedTableName: 'users',
             onDelete: 'CASCADE',
+            onUpdate: 'CASCADE',
+          },
+          {
+            name: 'NoteTag',
+            columnNames: ['tag_id'],
+            referencedColumnNames: ['id'],
+            referencedTableName: 'tags',
+            onDelete: 'SET NULL',
             onUpdate: 'CASCADE',
           },
         ],

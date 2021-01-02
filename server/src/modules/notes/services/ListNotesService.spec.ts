@@ -1,7 +1,7 @@
-import NoteColors from '../dtos/NoteColors';
-import FakeNotesRepository from '../repositories/fakes/FakeNotesRepository';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
+import FakeNotesRepository from '../repositories/fakes/FakeNotesRepository';
 import ListNotesService from './ListNotesService';
+import NoteColors from '../dtos/NoteColors';
 import NoteStatus from '../dtos/NoteStatus';
 
 let fakeUsersRepository: FakeUsersRepository;
@@ -44,7 +44,15 @@ describe('ListNotes', () => {
       title: 'Title',
       body: 'Body',
       color: NoteColors.NoColor,
-      status: NoteStatus.ARCHIVED,
+      status: NoteStatus.ARCHIVED, // !!!
+    });
+
+    await fakeNotesRepository.create({
+      user_id: 'another-user-id', // !!!
+      title: 'Title',
+      body: 'Body',
+      color: NoteColors.NoColor,
+      status: NoteStatus.ACTIVE,
     });
 
     const notes = await listNotes.execute({
@@ -55,6 +63,8 @@ describe('ListNotes', () => {
     expect(notes.length).toEqual(2);
     expect(notes[0].status).toEqual(NoteStatus.ACTIVE);
     expect(notes[1].status).toEqual(NoteStatus.ACTIVE);
+    expect(notes[0].user_id).toEqual(user.id);
+    expect(notes[1].user_id).toEqual(user.id);
   });
 
   it("should be able to list all archived user's notes", async () => {
@@ -84,7 +94,15 @@ describe('ListNotes', () => {
       title: 'Title',
       body: 'Body',
       color: NoteColors.NoColor,
-      status: NoteStatus.ACTIVE,
+      status: NoteStatus.ACTIVE, // !!!
+    });
+
+    await fakeNotesRepository.create({
+      user_id: 'another-user-id', // !!!
+      title: 'Title',
+      body: 'Body',
+      color: NoteColors.NoColor,
+      status: NoteStatus.ARCHIVED,
     });
 
     const notes = await listNotes.execute({
@@ -95,6 +113,8 @@ describe('ListNotes', () => {
     expect(notes.length).toEqual(2);
     expect(notes[0].status).toEqual(NoteStatus.ARCHIVED);
     expect(notes[1].status).toEqual(NoteStatus.ARCHIVED);
+    expect(notes[0].user_id).toEqual(user.id);
+    expect(notes[1].user_id).toEqual(user.id);
   });
 
   it("should be able to list user's active notes by tag and query", async () => {
