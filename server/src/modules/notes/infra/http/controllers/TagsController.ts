@@ -61,6 +61,6 @@ export default class TagsController {
       id,
     });
 
-    return response.status(204);
+    return response.status(204).json();
   }
 }

@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, Table } from "typeorm";
 
-export default class CreateNotes1609592066731 implements MigrationInterface {
+export default class CreateTags1609592066721 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -13,8 +13,14 @@ export default class CreateNotes1609592066731 implements MigrationInterface {
             generationStrategy: 'uuid',
           },
           {
+            name: 'user_id',
+            type: 'varchar(36)',
+            isNullable: true,
+          },
+          {
             name: 'name',
             type: 'varchar',
+            isNullable: false,
           },
           {
             name: 'created_at',
@@ -25,6 +31,16 @@ export default class CreateNotes1609592066731 implements MigrationInterface {
             name: 'updated_at',
             type: 'timestamp',
             default: 'now()',
+          },
+        ],
+        foreignKeys: [
+          {
+            name: 'TagUser',
+            columnNames: ['user_id'],
+            referencedColumnNames: ['id'],
+            referencedTableName: 'users',
+            onDelete: 'CASCADE',
+            onUpdate: 'CASCADE',
           },
         ],
       }),

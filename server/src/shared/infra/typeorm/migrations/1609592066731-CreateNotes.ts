@@ -25,6 +25,7 @@ export default class CreateNotes1609592066731 implements MigrationInterface {
           {
             name: 'title',
             type: 'varchar',
+            isNullable: true,
           },
           {
             name: 'body',

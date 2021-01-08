@@ -71,6 +71,6 @@ export default class NotesController {
       id,
     });
 
-    return response.status(204);
+    return response.status(204).json();
   }
 }
