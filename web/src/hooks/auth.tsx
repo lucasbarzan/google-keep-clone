@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useState, useContext } from 'react';
-import baseAPI from '../services/api';
+import { baseAPI } from '../services/api';
 
 interface User {
   id: string;

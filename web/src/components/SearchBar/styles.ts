@@ -11,8 +11,7 @@ export const Container = styled.div<ContainerProps>`
   align-items: center;
   background-color: #f1f3f4;
   border-radius: 0.8rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding: 0 1rem;
   width: 100%;
   max-width: 72rem;
   height: 4.6rem;
