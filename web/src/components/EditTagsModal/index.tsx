@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { MdDelete, MdCheck } from 'react-icons/md';
 import { useTags } from '../../hooks/tags';
+import api from '../../services/api';
 import CircularButton from '../CircularButton';
 
 import { Container, TagItem, iconSize, containerSize } from './styles';
@@ -16,11 +17,16 @@ interface EditTagsModalProps {
 
 const EditTagsModal: React.FC<EditTagsModalProps> = ({ onCloseModal }) => {
   // tempTags = { tagId: tagName }
+  const [newTag, setNewTag] = useState('');
   const [tempTags, setTempTags] = useState<{ [key: string]: string }>({});
 
-  const { getTags, updateTag, removeTag } = useTags();
+  const { getTags, addTag, updateTag, removeTag } = useTags();
 
   const tags = useMemo(() => getTags(), [getTags]);
+
+  const handleInputNewTag = useCallback(e => {
+    setNewTag(e.target.value);
+  }, []);
 
   const handleInputTagName = useCallback(
     (e, tagId: string) => {
@@ -31,15 +37,34 @@ const EditTagsModal: React.FC<EditTagsModalProps> = ({ onCloseModal }) => {
     [tempTags],
   );
 
+  const handleCreateTag = useCallback(async () => {
+    const response = await api.createTag({
+      name: newTag,
+    });
+
+    const addedTag = response.data;
+    addTag(addedTag);
+  }, [addTag, newTag]);
+
   const handleSaveTag = useCallback(
-    (tag: Tag) => {
-      updateTag(tag);
+    async (tag: Tag) => {
+      const response = await api.updateTag({
+        id: tag.id,
+        name: tag.name,
+      });
+
+      const updatedTag = response.data;
+      updateTag(updatedTag);
     },
     [updateTag],
   );
 
   const handleDeleteTag = useCallback(
-    (tagId: string) => {
+    async (tagId: string) => {
+      await api.deleteTag({
+        id: tagId,
+      });
+
       removeTag(tagId);
     },
     [removeTag],
@@ -49,11 +74,17 @@ const EditTagsModal: React.FC<EditTagsModalProps> = ({ onCloseModal }) => {
     <Container>
       <strong>Editar marcadores</strong>
       <div>
-        <input type="text" placeholder="Criar novo marcador" />
+        <input
+          type="text"
+          placeholder="Criar novo marcador"
+          value={newTag}
+          onChange={e => handleInputNewTag(e)}
+        />
         <CircularButton
           icon={MdCheck}
           iconSize={iconSize}
           containerSize={containerSize}
+          onClick={handleCreateTag}
         />
       </div>
       {tags.map(tag => (

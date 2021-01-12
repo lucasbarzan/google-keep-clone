@@ -51,7 +51,6 @@ const CreateNoteBar: React.FC = () => {
 
   const handleChangeTag = useCallback(async () => {
     const lastIndex = tags.findIndex(t => t.id === tag?.id);
-    console.log(lastIndex);
     if (lastIndex === -1) {
       setTag(tags[0]);
     } else {
@@ -94,6 +93,8 @@ const CreateNoteBar: React.FC = () => {
     setExpand(false);
     setTitle('');
     setBody('');
+    setColor(0);
+    setTag({} as Tag);
   }, [handleAddNote, body, title]);
 
   return (
@@ -121,7 +122,7 @@ const CreateNoteBar: React.FC = () => {
           iconSize={tagOptionIconSize}
           containerSize={tagOptionContainerSize}
           onClick={handleRemoveTag}
-          style={{ display: expand ? 'flex' : 'none' }}
+          style={{ display: tag?.name ? 'flex' : 'none' }}
         />
       </TagOptions>
       <Options expand={expand}>

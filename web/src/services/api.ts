@@ -73,7 +73,7 @@ interface UpdateNoteReq {
   title?: string;
   body?: string;
   color?: number;
-  tag_id?: string;
+  tag_id?: string | null;
 }
 
 interface ArchiveNoteReq {

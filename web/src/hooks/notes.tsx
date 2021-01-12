@@ -15,7 +15,6 @@ interface NotesContextData {
   getNotes(): Note[];
   setNotes(notes: Note[]): void;
   addNote(note: Note): void;
-  updateNoteColor(id: string, color: number): void;
   updateNote(note: Note): void;
   removeNote(id: string): void;
   archiveNote(id: string): void;
@@ -29,16 +28,6 @@ const NotesProvider: React.FC = ({ children }) => {
   const getNotes = useCallback((): Note[] => {
     return allNotes;
   }, [allNotes]);
-
-  const updateNoteColor = useCallback(
-    (id: string, color: number) => {
-      const updatedNotes = [...allNotes];
-      const noteIndex = updatedNotes.findIndex(note => note.id === id);
-      updatedNotes[noteIndex].color = color;
-      setAllNotes(updatedNotes);
-    },
-    [allNotes],
-  );
 
   const updateNote = useCallback(
     (note: Note) => {
@@ -74,7 +63,6 @@ const NotesProvider: React.FC = ({ children }) => {
         getNotes,
         setNotes,
         addNote,
-        updateNoteColor,
         updateNote,
         removeNote,
         archiveNote,

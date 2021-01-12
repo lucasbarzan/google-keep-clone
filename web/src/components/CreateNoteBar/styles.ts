@@ -11,7 +11,7 @@ interface ContainerProps {
   color: string;
 }
 
-interface TagProps {
+interface TagOptionsProps {
   expand: boolean;
 }
 
@@ -60,19 +60,27 @@ export const Container = styled.div<ContainerProps>`
   }
 `;
 
-export const TagOptions = styled.div<TagProps>`
-  display: ${props => (props.expand ? 'inline' : 'none')};
-  width: fit-content;
+export const TagOptions = styled.div<TagOptionsProps>`
+  display: ${props => (props.expand ? 'flex' : 'none')};
+  flex-direction: row;
+  align-items: center;
   height: 2.4rem;
+  width: fit-content;
   max-width: 8rem;
   background-color: rgba(0, 0, 0, 0.08);
   border-radius: 1.2rem;
-  font-size: 1.1rem;
-  line-height: 1.25rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding: 0.4rem 0.6rem;
+  padding: 0.8rem 0rem 0.8rem 0.8rem;
+  margin: 1rem;
+
+  > span {
+    font-size: 1.1rem;
+    font-family: 'Roboto';
+    line-height: 1.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 0.2rem;
+  }
 `;
 
 export const Options = styled.div<OptionsProps>`

@@ -2,24 +2,42 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React, { useCallback, useMemo, useState } from 'react';
-import { MdColorLens, MdArchive, MdDelete } from 'react-icons/md';
+import {
+  MdColorLens,
+  MdArchive,
+  MdDelete,
+  MdLabel,
+  MdClose,
+} from 'react-icons/md';
 import CircularButton from '../CircularButton';
 import { useNotes } from '../../hooks/notes';
 import convertColor from '../../utils/convertColor';
 import getNextColor from '../../utils/getNextColor';
 
-import { Container, optionIconSize, optionContainerSize } from './styles';
+import {
+  Container,
+  NoteArea,
+  TagOptions,
+  Options,
+  tagOptionIconSize,
+  tagOptionContainerSize,
+  optionIconSize,
+  optionContainerSize,
+} from './styles';
 import api from '../../services/api';
+import { useTags } from '../../hooks/tags';
+
+interface Tag {
+  id: string;
+  name: string;
+}
 
 interface Note {
   id: string;
   title: string;
   body: string;
   color: number;
-  tag?: {
-    id: string;
-    name: string;
-  };
+  tag?: Tag;
 }
 
 interface NoteBlockProps {
@@ -37,9 +55,12 @@ const NoteBlock: React.FC<NoteBlockProps> = ({
 }) => {
   const [note, setNote] = useState(inputNote);
 
-  const { updateNote, updateNoteColor, removeNote, archiveNote } = useNotes();
+  const { updateNote, removeNote, archiveNote } = useNotes();
+  const { getTags } = useTags();
 
   const noteColor = useMemo(() => convertColor(note.color), [note.color]);
+
+  const tags = useMemo(() => getTags(), [getTags]);
 
   const handleInputTitle = useCallback(
     e => {
@@ -59,62 +80,110 @@ const NoteBlock: React.FC<NoteBlockProps> = ({
     [note],
   );
 
-  const handleUpdateNoteColor = useCallback(async () => {
+  const handleChangeColor = useCallback(async () => {
     const newColor = getNextColor(note.color);
 
+    // Change color on API
     await api.updateNote({
       id: note.id,
       color: newColor,
     });
 
-    updateNoteColor(note.id, newColor);
-  }, [note.color, note.id, updateNoteColor]);
+    // Change color on hook
+    updateNote({
+      ...note,
+      color: newColor,
+    });
 
-  const handleArchiveNote = useCallback(
-    async (noteToArchive: Note) => {
-      // Archive note
-      await api.archiveNote({
-        id: note.id,
-      });
+    // Change color locally
+    setNote({
+      ...note,
+      color: newColor,
+    });
+  }, [note, updateNote]);
 
-      archiveNote(noteToArchive.id);
+  const handleChangeTag = useCallback(async () => {
+    const lastIndex = tags.findIndex(t => t.id === note.tag?.id);
+    const newIndex = (lastIndex + 1) % tags.length;
+    const newTag = lastIndex === -1 ? tags[0] : tags[newIndex];
 
-      // Close modal (if open)
-      onCloseNote();
-    },
-    [archiveNote, note.id, onCloseNote],
-  );
+    // Change tag on API
+    await api.updateNote({
+      id: note.id,
+      tag_id: newTag.id,
+    });
 
-  const handleDeleteNote = useCallback(
-    async (noteToDelete: Note) => {
-      // Delete note
-      await api.deleteNote({
-        id: note.id,
-      });
+    // Change tag on hook
+    updateNote({
+      ...note,
+      tag: newTag,
+    });
 
-      removeNote(noteToDelete.id);
+    // Change tag locally
+    setNote({
+      ...note,
+      tag: newTag,
+    });
+  }, [note, tags, updateNote]);
 
-      // Close modal (if open)
-      onCloseNote();
-    },
-    [note.id, onCloseNote, removeNote],
-  );
+  const handleRemoveTag = useCallback(async () => {
+    // Remove tag on API
+    await api.updateNote({
+      id: note.id,
+      tag_id: null,
+    });
 
-  const handleSaveAndCloseNote = useCallback(
-    async (noteToSave: Note) => {
-      // Update note
-      await api.updateNote({
-        id: noteToSave.id,
-        title: noteToSave.title,
-        body: noteToSave.body,
-      });
-      updateNote(noteToSave);
+    // Remove tag on hook
+    updateNote({
+      ...note,
+      tag: {} as Tag,
+    });
 
-      // Close modal (if open)
-      onCloseNote();
-    },
-    [onCloseNote, updateNote],
-  );
+    // Remove tag locally
+    setNote({
+      ...note,
+      tag: {} as Tag,
+    });
+  }, [note, updateNote]);
+
+  const handleArchiveNote = useCallback(async () => {
+    // Archive note
+    await api.archiveNote({
+      id: note.id,
+    });
+
+    archiveNote(note.id);
+
+    // Close modal (if open)
+    onCloseNote();
+  }, [archiveNote, note.id, onCloseNote]);
+
+  const handleDeleteNote = useCallback(async () => {
+    // Delete note
+    await api.deleteNote({
+      id: note.id,
+    });
+
+    removeNote(note.id);
+
+    // Close modal (if open)
+    onCloseNote();
+  }, [note.id, onCloseNote, removeNote]);
+
+  const handleSaveAndCloseNote = useCallback(async () => {
+    // Update note
+    await api.updateNote({
+      id: note.id,
+      title: note.title,
+      body: note.body,
+      color: note.color,
+      tag_id: note.tag?.id,
+    });
+    updateNote(note);
+
+    // Close modal (if open)
+    onCloseNote();
+  }, [note, onCloseNote, updateNote]);
 
   return (
     <Container
@@ -122,41 +191,58 @@ const NoteBlock: React.FC<NoteBlockProps> = ({
       bodySize={note.body ? note.body.length : 0}
       isModal={isModal}
     >
-      <div id="note" onClick={() => onOpenNote(note)}>
+      <NoteArea
+        bodySize={note.body ? note.body.length : 0}
+        isModal={isModal}
+        onClick={() => onOpenNote(note)}
+      >
         <strong contentEditable={isModal} onInput={e => handleInputTitle(e)}>
           {inputNote.title}
         </strong>
         <span contentEditable={isModal} onInput={e => handleInputBody(e)}>
           {inputNote.body}
         </span>
-      </div>
-      <div id="options">
+      </NoteArea>
+      <TagOptions expand={!!note.tag?.name}>
+        <span>{note.tag?.name}</span>
+        <CircularButton
+          icon={MdClose}
+          iconSize={tagOptionIconSize}
+          containerSize={tagOptionContainerSize}
+          onClick={handleRemoveTag}
+          style={{ display: note.tag?.name ? 'flex' : 'none' }}
+        />
+      </TagOptions>
+      <Options id="options" isModal={isModal}>
         <CircularButton
           icon={MdColorLens}
           iconSize={optionIconSize}
           containerSize={optionContainerSize}
-          onClick={handleUpdateNoteColor}
+          onClick={handleChangeColor}
+        />
+        <CircularButton
+          icon={MdLabel}
+          iconSize={optionIconSize}
+          containerSize={optionContainerSize}
+          onClick={handleChangeTag}
+          style={{ display: tags.length > 0 ? 'flex' : 'none' }}
         />
         <CircularButton
           icon={MdArchive}
           iconSize={optionIconSize}
           containerSize={optionContainerSize}
-          onClick={() => handleArchiveNote(note)}
+          onClick={handleArchiveNote}
         />
         <CircularButton
           icon={MdDelete}
           iconSize={optionIconSize}
           containerSize={optionContainerSize}
-          onClick={() => handleDeleteNote(note)}
+          onClick={handleDeleteNote}
         />
-        <button
-          id="close"
-          type="button"
-          onClick={() => handleSaveAndCloseNote(note)}
-        >
+        <button id="close" type="button" onClick={handleSaveAndCloseNote}>
           Fechar
         </button>
-      </div>
+      </Options>
     </Container>
   );
 };
