@@ -18,6 +18,7 @@ const CircularButton: React.FC<CircularButtonProps> = ({
   containerSize = 4.8,
   visibility = 'visible',
   onClick,
+  ...rest
 }) => {
   return (
     <Container
@@ -25,6 +26,7 @@ const CircularButton: React.FC<CircularButtonProps> = ({
       type="button"
       visibility={visibility}
       onClick={onClick}
+      {...rest}
     >
       {Icon && <Icon size={iconSize} />}
     </Container>

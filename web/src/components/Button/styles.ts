@@ -7,13 +7,13 @@ export const Container = styled.button`
   border-radius: 1rem;
   border: 0;
   padding: 0 1.6rem;
-  color: #312e38;
+  color: #fff;
   width: 100%;
-  font-weight: 500;
+  font-weight: 700;
   margin-top: 1.6rem;
   transition: background-color 0.2s;
 
   &:hover {
-    background: ${shade(0.2, 'var(--color-primary)')};
+    background: ${shade(0.2, '#ffba00')};
   }
 `;

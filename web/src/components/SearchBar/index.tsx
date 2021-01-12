@@ -7,18 +7,20 @@ import React, {
 } from 'react';
 import { MdSearch, MdClose } from 'react-icons/md';
 import { useNotes } from '../../hooks/notes';
+import api from '../../services/api';
+import NoteStatus from '../../utils/NoteStatus';
 
 import CircularButton from '../CircularButton';
 import { Container } from './styles';
 
-const SearchBar: React.FC<InputHTMLAttributes<HTMLInputElement>> = () => {
+const SearchBar: React.FC<InputHTMLAttributes<HTMLInputElement>> = ({
+  ...rest
+}) => {
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const [hasFocusedBefore, setHasFocusedBefore] = useState(false);
+  const [showClearButton, setShowClearButton] = useState(false);
 
-  const { getNotes, setNotes } = useNotes();
-
-  const notes = useMemo(() => getNotes(), [getNotes]);
+  const { setNotes } = useNotes();
 
   const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
@@ -26,7 +28,7 @@ const SearchBar: React.FC<InputHTMLAttributes<HTMLInputElement>> = () => {
 
   const handleInputFocus = useCallback(() => {
     setIsFocused(true);
-    setHasFocusedBefore(true);
+    setShowClearButton(true);
   }, []);
 
   const handleInputBlur = useCallback(() => {
@@ -34,11 +36,15 @@ const SearchBar: React.FC<InputHTMLAttributes<HTMLInputElement>> = () => {
   }, []);
 
   const handleSearch = useCallback(
-    (queryOptional?: string) => {
-      const searchNotes = notes.filter(note => note.title === query);
-      setNotes(searchNotes);
+    async (search?: string) => {
+      const response = await api.getAllNotes({
+        status: NoteStatus.ACTIVE, // ???
+        query: search || query,
+      });
+
+      setNotes(response.data);
     },
-    [notes, query, setNotes],
+    [query, setNotes],
   );
 
   const handleInputKeyDown = useCallback(
@@ -51,13 +57,14 @@ const SearchBar: React.FC<InputHTMLAttributes<HTMLInputElement>> = () => {
   );
 
   const handleClear = useCallback(() => {
+    setShowClearButton(false);
     setQuery('');
 
     handleSearch('');
   }, [handleSearch]);
 
   return (
-    <Container isFocused={isFocused} hasFocusedBefore={hasFocusedBefore}>
+    <Container isFocused={isFocused} {...rest}>
       <CircularButton icon={MdSearch} hoverColor="#e3e5e6" containerSize={4} />
       <input
         type="text"
@@ -72,7 +79,7 @@ const SearchBar: React.FC<InputHTMLAttributes<HTMLInputElement>> = () => {
         icon={MdClose}
         hoverColor="#e3e5e6"
         containerSize={4}
-        visibility={hasFocusedBefore ? 'visible' : 'hidden'}
+        visibility={showClearButton ? 'visible' : 'hidden'}
         onClick={handleClear}
       />
     </Container>

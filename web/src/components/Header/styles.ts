@@ -8,7 +8,7 @@ export const Container = styled.header`
   width: 100%;
   padding: 0.8rem 1.2rem;
 
-  a {
+  > a {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -29,5 +29,9 @@ export const Container = styled.header`
       margin-left: 0.75rem;
       margin-right: 2.5rem;
     }
+  }
+
+  #exit-button {
+    margin-left: auto;
   }
 `;

@@ -16,6 +16,8 @@ import {
 } from './styles';
 import { useTags } from '../../hooks/tags';
 import { useNotes } from '../../hooks/notes';
+import api from '../../services/api';
+import NoteStatus from '../../utils/NoteStatus';
 
 interface Note {
   id: string;
@@ -45,117 +47,40 @@ const Home: React.FC = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    if (pathname === '/archive') {
-      // Archive page
-      selectTag('archive');
-      setNotes([
-        {
-          id: '1',
-          title: 'title 1',
-          body: 'body 1',
-          color: 8,
-          tag: { id: '1', name: 'tag 1' },
-        },
-        {
-          id: '2',
-          title: 'title 2',
-          body: 'body 2',
-          color: 9,
-          tag: { id: '1', name: 'tag 1' },
-        },
-      ]);
-    } else if (tagId) {
-      // Tag page
-      selectTag(tagId);
+    const func = async () => {
+      const { data: tags } = await api.getAllTags();
+      setTags(tags);
 
-      setNotes(
-        [
-          {
-            id: '1',
-            title: 'title 1',
-            body: 'body 1',
-            color: 0,
-            tag: { id: '1', name: 'tag 1' },
-          },
-          {
-            id: '2',
-            title: 'title 2',
-            body: 'body 2',
-            color: 2,
-            tag: { id: '1', name: 'tag 1' },
-          },
-          {
-            id: '3',
-            title: 'title 3',
-            body: 'body 3',
-            color: 0,
-            tag: { id: '2', name: 'tag 2' },
-          },
-          {
-            id: '4',
-            title: 'title 4',
-            body: 'body 4',
-            color: 4,
-            tag: { id: '2', name: 'tag 2' },
-          },
-          {
-            id: '5',
-            title: 'title 5',
-            body: 'body 5',
-            color: 0,
-            tag: { id: '3', name: 'tag 3' },
-          },
-        ].filter(n => n.tag.id === tagId),
-      );
-    } else {
-      // Home page
-      selectTag('notes');
+      if (pathname === '/archive') {
+        // Archive page
+        selectTag('archive');
 
-      setNotes([
-        {
-          id: '1',
-          title: 'title 1',
-          body: 'body 1',
-          color: 0,
-          tag: { id: '1', name: 'tag 1' },
-        },
-        {
-          id: '2',
-          title: 'title 2',
-          body: 'body 2',
-          color: 2,
-          tag: { id: '1', name: 'tag 1' },
-        },
-        {
-          id: '3',
-          title: 'title 3',
-          body: 'body 3',
-          color: 0,
-          tag: { id: '2', name: 'tag 2' },
-        },
-        {
-          id: '4',
-          title: 'title 4',
-          body: 'body 4',
-          color: 4,
-          tag: { id: '2', name: 'tag 2' },
-        },
-        {
-          id: '5',
-          title: 'title 5',
-          body: 'body 5',
-          color: 0,
-          tag: { id: '3', name: 'tag 3' },
-        },
-      ]);
-    }
+        const { data: archivedNotes } = await api.getAllNotes({
+          status: NoteStatus.ARCHIVED,
+        });
+        setNotes(archivedNotes);
+      } else if (tagId) {
+        // Tag page
+        selectTag(tagId);
 
-    setTags([
-      { id: '1', name: 'tag 1' },
-      { id: '2', name: 'tag 2' },
-      { id: '3', name: 'tag 3' },
-    ]);
-  }, [pathname, setNotes, setTags, tagId]);
+        const { data: notes } = await api.getAllNotes({
+          tagId,
+          status: NoteStatus.ACTIVE,
+        });
+        setNotes(notes);
+      } else {
+        // Home page
+        selectTag('notes');
+
+        const { data: notes } = await api.getAllNotes({
+          status: NoteStatus.ACTIVE,
+        });
+        setNotes(notes);
+      }
+    };
+
+    func();
+  }, [pathname, selectTag, setNotes, setTags, tagId]);
 
   const notes = useMemo(() => getNotes(), [getNotes]);
 

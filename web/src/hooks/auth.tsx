@@ -1,5 +1,11 @@
-import React, { createContext, useCallback, useState, useContext } from 'react';
-import { baseAPI } from '../services/api';
+import React, {
+  createContext,
+  useCallback,
+  useState,
+  useContext,
+  useMemo,
+} from 'react';
+import api from '../services/api';
 
 interface User {
   id: string;
@@ -8,7 +14,6 @@ interface User {
 
 interface AuthState {
   token: string;
-  // eslint-disable-next-line @typescript-eslint/ban-types
   user: User;
 }
 
@@ -18,7 +23,6 @@ interface SignInCredentials {
 }
 
 interface AuthContextData {
-  // eslint-disable-next-line @typescript-eslint/ban-types
   user: User;
   signIn(credentials: SignInCredentials): Promise<void>;
   signOut(): void;
@@ -28,14 +32,12 @@ interface AuthContextData {
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 const AuthProvider: React.FC = ({ children }) => {
-  const api = baseAPI('http://localhost:3333');
-
   const [data, setData] = useState<AuthState>(() => {
     const token = localStorage.getItem('@KeepClone:token');
     const user = localStorage.getItem('@KeepClone:user');
 
     if (token && user) {
-      api.defaults.headers.authorization = `Bearer ${token}`;
+      api.axiosInstance.defaults.headers.authorization = `Bearer ${token}`;
 
       return { token, user: JSON.parse(user) };
     }
@@ -43,24 +45,21 @@ const AuthProvider: React.FC = ({ children }) => {
     return {} as AuthState;
   });
 
-  const signIn = useCallback(
-    async ({ email, password }) => {
-      const response = await api.post('sessions', {
-        email,
-        password,
-      });
+  const signIn = useCallback(async ({ email, password }) => {
+    const { data: loginRes } = await api.login({
+      email,
+      password,
+    });
 
-      const { token, user } = response.data;
+    const { token, user } = loginRes;
 
-      localStorage.setItem('@KeepClone:token', token);
-      localStorage.setItem('@KeepClone:user', JSON.stringify(user));
+    localStorage.setItem('@KeepClone:token', token);
+    localStorage.setItem('@KeepClone:user', JSON.stringify(user));
 
-      api.defaults.headers.authorization = `Bearer ${token}`;
+    api.axiosInstance.defaults.headers.authorization = `Bearer ${token}`;
 
-      setData({ token, user });
-    },
-    [api],
-  );
+    setData({ token, user });
+  }, []);
 
   const signOut = useCallback(() => {
     localStorage.removeItem('@KeepClone:token');

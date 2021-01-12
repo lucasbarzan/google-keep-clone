@@ -1,6 +1,17 @@
 import styled from 'styled-components';
 
+export const tagOptionIconSize = 12;
+export const tagOptionContainerSize = 2.4;
+
+export const optionIconSize = 18;
+export const optionContainerSize = 3.6;
+
 interface ContainerProps {
+  expand: boolean;
+  color: string;
+}
+
+interface TagProps {
   expand: boolean;
 }
 
@@ -16,9 +27,11 @@ export const Container = styled.div<ContainerProps>`
   border-radius: 0.8rem;
   box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.302),
     0 2px 6px 2px rgba(60, 64, 67, 0.149);
+  background-color: ${props => props.color || 'transparent'};
 
   #note-title {
     display: ${props => (props.expand ? 'block' : 'none')};
+    background-color: ${props => props.color || 'transparent'};
     width: 100%;
     min-height: 4.6rem;
     border-radius: 0.8rem;
@@ -36,6 +49,7 @@ export const Container = styled.div<ContainerProps>`
     border-radius: 0.8rem;
     border: 0;
     font-size: ${props => (props.expand ? '1.4rem' : '1.6rem')};
+    background-color: ${props => props.color || 'transparent'};
     padding: 1.6rem;
     resize: vertical;
     overflow: auto;
@@ -46,12 +60,27 @@ export const Container = styled.div<ContainerProps>`
   }
 `;
 
+export const TagOptions = styled.div<TagProps>`
+  display: ${props => (props.expand ? 'inline' : 'none')};
+  width: fit-content;
+  height: 2.4rem;
+  max-width: 8rem;
+  background-color: rgba(0, 0, 0, 0.08);
+  border-radius: 1.2rem;
+  font-size: 1.1rem;
+  line-height: 1.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0.4rem 0.6rem;
+`;
+
 export const Options = styled.div<OptionsProps>`
   display: flex;
   flex-direction: row;
   margin: ${props => (props.expand ? '0.4rem' : '0')};
 
-  button {
+  #close-button {
     display: ${props => (props.expand ? 'block' : 'none')};
     border: 0;
     border-radius: 0.4rem;

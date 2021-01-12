@@ -11,13 +11,14 @@ import Logo from '../../assets/logo.png';
 import { Container } from './styles';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
+import api from '../../services/api';
 
-interface SignInFormData {
+interface SignUpFormData {
   email: string;
   password: string;
 }
 
-const Login: React.FC = () => {
+const SignUp: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
   const { signIn } = useAuth();
@@ -26,7 +27,7 @@ const Login: React.FC = () => {
   const history = useHistory();
 
   const handleSubmit = useCallback(
-    async (data: SignInFormData) => {
+    async (data: SignUpFormData) => {
       try {
         formRef.current?.setErrors({});
 
@@ -39,6 +40,11 @@ const Login: React.FC = () => {
 
         await schema.validate(data, { abortEarly: false });
 
+        await api.createUser({
+          email: data.email,
+          password: data.password,
+        });
+
         await signIn({
           email: data.email,
           password: data.password,
@@ -46,7 +52,6 @@ const Login: React.FC = () => {
 
         history.push('/');
       } catch (err) {
-        console.log(err);
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
 
@@ -57,8 +62,9 @@ const Login: React.FC = () => {
 
         addToast({
           type: 'error',
-          title: 'Erro na autenticação',
-          description: 'Ocorreu um erro ao fazer login. Cheque seus dados.',
+          title: 'Erro no cadastro',
+          description:
+            'Ocorreu um erro ao fazer o cadastro. Cheque seus dados.',
         });
       }
     },
@@ -68,17 +74,17 @@ const Login: React.FC = () => {
   return (
     <Container>
       <img src={Logo} alt="Google Keep Clone Logo" />
-      <h1>Entrar</h1>
+      <h1>Criar uma conta</h1>
       <Form ref={formRef} onSubmit={handleSubmit}>
-        <Input autoFocus name="email" type="text" placeholder="E-mail" />
-        <Input name="password" type="password" placeholder="Senha" />
+        <Input autoFocus name="email" type="text" placeholder="Seu e-mail" />
+        <Input name="password" type="password" placeholder="Sua senha" />
         <Button type="submit" loading={false}>
-          Entrar
+          Cadastrar
         </Button>
       </Form>
-      <Link to="/signup">Quero criar uma conta</Link>
+      <Link to="/login">Já tenho uma conta</Link>
     </Container>
   );
 };
 
-export default Login;
+export default SignUp;

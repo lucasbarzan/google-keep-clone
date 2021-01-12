@@ -11,14 +11,13 @@ export const Container = styled.button<ContainerProps>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-icon-base);
   background-color: transparent;
   border: 0;
   border-radius: 50%;
   visibility: ${props => props.visibility};
 
   svg {
-    color: #202124;
+    color: var(--color-icon-base);
   }
 
   &:hover {

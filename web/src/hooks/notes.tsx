@@ -18,6 +18,7 @@ interface NotesContextData {
   updateNoteColor(id: string, color: number): void;
   updateNote(note: Note): void;
   removeNote(id: string): void;
+  archiveNote(id: string): void;
 }
 
 const NotesContext = createContext<NotesContextData>({} as NotesContextData);
@@ -56,10 +57,14 @@ const NotesProvider: React.FC = ({ children }) => {
   }, []);
 
   const addNote = useCallback((note: Note) => {
-    setAllNotes(state => [...state, note]);
+    setAllNotes(state => [note, ...state]);
   }, []);
 
   const removeNote = useCallback((id: string) => {
+    setAllNotes(state => state.filter(note => note.id !== id));
+  }, []);
+
+  const archiveNote = useCallback((id: string) => {
     setAllNotes(state => state.filter(note => note.id !== id));
   }, []);
 
@@ -72,6 +77,7 @@ const NotesProvider: React.FC = ({ children }) => {
         updateNoteColor,
         updateNote,
         removeNote,
+        archiveNote,
       }}
     >
       {children}

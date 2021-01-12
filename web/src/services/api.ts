@@ -1,4 +1,5 @@
-import axios, { AxiosInstance } from 'axios';
+/* eslint-disable class-methods-use-this */
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
 export const baseAPI = (baseURL: string): AxiosInstance => {
   const api = axios.create({
@@ -102,89 +103,114 @@ interface DeleteTagReq {
   id: string;
 }
 
+// /// /////////// Others /////////// ///
+
+interface LoginRes {
+  token: string;
+  user: User;
+}
+
 /// ////////////////////////////////  ///// ///
 
-export default class API {
-  api: AxiosInstance;
-
-  constructor() {
-    this.api = baseAPI('http://localhost:3333');
-  }
+export default class api {
+  static axiosInstance: AxiosInstance = baseAPI('http://localhost:3333');
 
   /// /////////// USERS Endpoints /////////// ///
 
-  async createUser(body: CreateUserReq): Promise<Omit<User, 'password'>> {
-    const { data } = await this.api.post<Omit<User, 'password'>>('users', body);
-    return data;
+  static async createUser(
+    body: CreateUserReq,
+  ): Promise<AxiosResponse<Omit<User, 'password'>>> {
+    const response = await api.axiosInstance.post<Omit<User, 'password'>>(
+      'users',
+      body,
+    );
+    return response;
   }
 
-  async login(body: LoginReq): Promise<User> {
-    const { data } = await this.api.post<User>('sessions', body);
-    return data;
+  static async login(body: LoginReq): Promise<AxiosResponse<LoginRes>> {
+    const response = await api.axiosInstance.post<LoginRes>('sessions', body);
+    return response;
   }
 
-  async forgotUserPassword(body: ForgotUserPasswordReq): Promise<void> {
-    await this.api.post<void>('password/forgot', body);
+  static async forgotUserPassword(body: ForgotUserPasswordReq): Promise<void> {
+    await api.axiosInstance.post<void>('password/forgot', body);
   }
 
-  async resetUserPassword(body: ResetUserPasswordReq): Promise<void> {
-    await this.api.post<void>('password/reset', body);
+  static async resetUserPassword(body: ResetUserPasswordReq): Promise<void> {
+    await api.axiosInstance.post<void>('password/reset', body);
   }
 
   /// /////////// NOTES Endpoints /////////// ///
 
-  async getAllNotes({ tagId, query }: GetAllNotesReq): Promise<Note[]> {
-    const { data } = await this.api.get<Note[]>('notes', {
+  static async getAllNotes({
+    tagId,
+    query,
+    status,
+  }: GetAllNotesReq): Promise<AxiosResponse<Note[]>> {
+    const response = await api.axiosInstance.get<Note[]>('notes', {
       params: {
         tag: tagId,
         query,
+        status,
       },
     });
-    return data;
+    return response;
   }
 
-  async createNote(body: CreateNoteReq): Promise<Note> {
-    const { data } = await this.api.post<Note>('notes', body);
-    return data;
+  static async createNote(body: CreateNoteReq): Promise<AxiosResponse<Note>> {
+    const response = await api.axiosInstance.post<Note>('notes', body);
+    return response;
   }
 
-  async updateNote({ id, ...body }: UpdateNoteReq): Promise<Note> {
-    const { data } = await this.api.patch<Note>(`notes/${id}`, body);
-    return data;
+  static async updateNote({
+    id,
+    ...body
+  }: UpdateNoteReq): Promise<AxiosResponse<Note>> {
+    const response = await api.axiosInstance.patch<Note>(`notes/${id}`, body);
+    return response;
   }
 
-  async archiveNote({ id }: ArchiveNoteReq): Promise<Note> {
-    const { data } = await this.api.post<Note>(`notes/archive/${id}`);
-    return data;
+  static async archiveNote({
+    id,
+  }: ArchiveNoteReq): Promise<AxiosResponse<Note>> {
+    const response = await api.axiosInstance.post<Note>(`notes/archive/${id}`);
+    return response;
   }
 
-  async unarchiveNote({ id }: UnarchiveNoteReq): Promise<Note> {
-    const { data } = await this.api.delete<Note>(`notes/archive/${id}`);
-    return data;
+  static async unarchiveNote({
+    id,
+  }: UnarchiveNoteReq): Promise<AxiosResponse<Note>> {
+    const response = await api.axiosInstance.delete<Note>(
+      `notes/archive/${id}`,
+    );
+    return response;
   }
 
-  async deleteNote({ id }: DeleteNoteReq): Promise<void> {
-    await this.api.delete<void>(`notes/${id}`);
+  static async deleteNote({ id }: DeleteNoteReq): Promise<void> {
+    await api.axiosInstance.delete<void>(`notes/${id}`);
   }
 
   /// /////////// TAGS Endpoints /////////// ///
 
-  async getAllTags(): Promise<Tag[]> {
-    const { data } = await this.api.get<Tag[]>('tags');
-    return data;
+  static async getAllTags(): Promise<AxiosResponse<Tag[]>> {
+    const response = await api.axiosInstance.get<Tag[]>('tags');
+    return response;
   }
 
-  async createTag(body: CreateTagReq): Promise<Tag> {
-    const { data } = await this.api.post<Tag>('tags', body);
-    return data;
+  static async createTag(body: CreateTagReq): Promise<AxiosResponse<Tag>> {
+    const response = await api.axiosInstance.post<Tag>('tags', body);
+    return response;
   }
 
-  async updateTag({ id, ...body }: UpdateTagReq): Promise<Tag> {
-    const { data } = await this.api.patch<Tag>(`tags/${id}`, body);
-    return data;
+  static async updateTag({
+    id,
+    ...body
+  }: UpdateTagReq): Promise<AxiosResponse<Tag>> {
+    const response = await api.axiosInstance.patch<Tag>(`tags/${id}`, body);
+    return response;
   }
 
-  async deleteTag({ id }: DeleteTagReq): Promise<void> {
-    await this.api.delete<void>(`tags/${id}`);
+  static async deleteTag({ id }: DeleteTagReq): Promise<void> {
+    await api.axiosInstance.delete<void>(`tags/${id}`);
   }
 }

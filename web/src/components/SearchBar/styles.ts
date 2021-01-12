@@ -2,7 +2,6 @@ import styled, { css } from 'styled-components';
 
 interface ContainerProps {
   isFocused: boolean;
-  hasFocusedBefore: boolean;
 }
 
 export const Container = styled.div<ContainerProps>`

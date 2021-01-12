@@ -9,6 +9,7 @@ import convertColor from '../../utils/convertColor';
 import getNextColor from '../../utils/getNextColor';
 
 import { Container, optionIconSize, optionContainerSize } from './styles';
+import api from '../../services/api';
 
 interface Note {
   id: string;
@@ -36,7 +37,7 @@ const NoteBlock: React.FC<NoteBlockProps> = ({
 }) => {
   const [note, setNote] = useState(inputNote);
 
-  const { updateNote, updateNoteColor, removeNote } = useNotes();
+  const { updateNote, updateNoteColor, removeNote, archiveNote } = useNotes();
 
   const noteColor = useMemo(() => convertColor(note.color), [note.color]);
 
@@ -58,36 +59,55 @@ const NoteBlock: React.FC<NoteBlockProps> = ({
     [note],
   );
 
-  const handleUpdateNoteColor = useCallback(() => {
+  const handleUpdateNoteColor = useCallback(async () => {
     const newColor = getNextColor(note.color);
+
+    await api.updateNote({
+      id: note.id,
+      color: newColor,
+    });
+
     updateNoteColor(note.id, newColor);
   }, [note.color, note.id, updateNoteColor]);
 
   const handleArchiveNote = useCallback(
-    (noteToArchive: Note) => {
+    async (noteToArchive: Note) => {
       // Archive note
-      removeNote(noteToArchive.id);
+      await api.archiveNote({
+        id: note.id,
+      });
+
+      archiveNote(noteToArchive.id);
 
       // Close modal (if open)
       onCloseNote();
     },
-    [onCloseNote, removeNote],
+    [archiveNote, note.id, onCloseNote],
   );
 
   const handleDeleteNote = useCallback(
-    (noteToDelete: Note) => {
+    async (noteToDelete: Note) => {
       // Delete note
+      await api.deleteNote({
+        id: note.id,
+      });
+
       removeNote(noteToDelete.id);
 
       // Close modal (if open)
       onCloseNote();
     },
-    [onCloseNote, removeNote],
+    [note.id, onCloseNote, removeNote],
   );
 
   const handleSaveAndCloseNote = useCallback(
-    (noteToSave: Note) => {
+    async (noteToSave: Note) => {
       // Update note
+      await api.updateNote({
+        id: noteToSave.id,
+        title: noteToSave.title,
+        body: noteToSave.body,
+      });
       updateNote(noteToSave);
 
       // Close modal (if open)
