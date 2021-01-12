@@ -30,15 +30,25 @@ class UpdateNoteService {
 
     if (note.user_id !== user_id) throw new AppError('You cannot update this note.', 403);
 
-    if (title) note.title = title;
+    if (title) {
+      if (title === 'null') {
+        note.title = null;
+      } else {
+        note.title = title;
+      }
+    }
     if (body) note.body = body;
     if (color) note.color = color;
     if (tag_id) {
-      const tag = await this.tagsRepository.findById(tag_id);
-      if (!tag) throw new AppError('Tag not found.', 404);
-      if (tag.user_id !== user_id) throw new AppError('You cannot use this tag.', 403);
+      if (tag_id === 'null') {
+        note.tag = null;
+      } else {
+        const tag = await this.tagsRepository.findById(tag_id);
+        if (!tag) throw new AppError('Tag not found.', 404);
+        if (tag.user_id !== user_id) throw new AppError('You cannot use this tag.', 403);
 
-      note.tag_id = tag_id;
+        note.tag = tag;
+      }
     }
 
     await this.notesRepository.save(note);

@@ -1,6 +1,6 @@
 import NoteColors from '@modules/notes/dtos/NoteColors';
 import NoteStatus from '@modules/notes/dtos/NoteStatus';
-import { Exclude } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 import {
   Entity,
   Column,
@@ -25,8 +25,8 @@ class Note {
   @Column('uuid')
   user_id: string;
 
-  @Column()
-  title: string;
+  @Column({ type: 'varchar' })
+  title?: string | null;
 
   @Column()
   body: string;
@@ -36,11 +36,11 @@ class Note {
 
   @ManyToOne(() => Tag)
   @JoinColumn({ name: 'tag_id' })
-  tag: Tag;
+  tag?: Tag | null;
 
   @Exclude()
-  @Column('uuid')
-  tag_id: string;
+  @Column({ type: 'uuid' })
+  tag_id?: string | null;
 
   @Column({ enum: NoteStatus })
   status: number;

@@ -24,7 +24,7 @@ notesRouter.get(
   celebrate({
     [Segments.QUERY]: {
       tag: Joi.string().uuid(),
-      query: Joi.string(),
+      query: Joi.string().allow(''),
       status: Joi.number().valid(...getEnumValues(NoteStatus)).required(),
     },
   }),
@@ -35,10 +35,10 @@ notesRouter.post(
   '/',
   celebrate({
     [Segments.BODY]: {
-      title: Joi.string().allow(''),
-      body: Joi.string().required(),
+      title: Joi.string().allow('', 'null'),
+      body: Joi.string().allow('null').required(),
       color: Joi.number().valid(...getEnumValues(NoteColors)).required(),
-      tag_id: Joi.string(),
+      tag_id: Joi.string().allow('', 'null'),
     },
   }),
   notesController.create,
@@ -51,10 +51,10 @@ notesRouter.patch(
       id: Joi.string().uuid().required(),
     },
     [Segments.BODY]: {
-      title: Joi.string().allow(''),
+      title: Joi.string().allow('', 'null'),
       body: Joi.string(),
       color: Joi.number().valid(...getEnumValues(NoteColors)),
-      tag_id: Joi.string(),
+      tag_id: Joi.string().allow('', 'null'),
     },
   }),
   notesController.update,

@@ -13,14 +13,17 @@ class NotesRepository implements INotesRepository {
   }
 
   public async findById(id: string): Promise<Note | undefined> {
-    const note = await this.ormRepository.findOne(id);
+    const note = await this.ormRepository.findOne(id, {
+      relations: ['tag']
+    });
 
     return note;
   }
 
   public async findAll({ user_id, tag, query, status }: IFindAllNotesDTO): Promise<Note[]> {
     let dbQuery = this.ormRepository
-      .createQueryBuilder('note');
+      .createQueryBuilder('note')
+      .leftJoinAndSelect("note.tag", "tag");
 
     dbQuery = dbQuery
       .where('note.status = :status', {
