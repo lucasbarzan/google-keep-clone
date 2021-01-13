@@ -5,29 +5,25 @@ import { Form } from '@unform/web';
 import * as Yup from 'yup';
 import getValidationErrors from '../../utils/getValidationErrors';
 
-import { useAuth } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 import Logo from '../../assets/logo.png';
 import { Container } from './styles';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
+import api from '../../services/api';
 
-interface SignInFormData {
+interface ForgotPasswordFormData {
   email: string;
-  password: string;
 }
 
-const Login: React.FC = () => {
+const ForgotPassword: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const formRef = useRef<FormHandles>(null);
 
-  const { signIn } = useAuth();
   const { addToast } = useToast();
 
-  const history = useHistory();
-
   const handleSubmit = useCallback(
-    async (data: SignInFormData) => {
+    async (data: ForgotPasswordFormData) => {
       try {
         setIsLoading(true);
 
@@ -37,22 +33,21 @@ const Login: React.FC = () => {
           email: Yup.string()
             .email('Digite um e-mail válido')
             .required('Email obrigatório'),
-          password: Yup.string().required('Senha obrigatória'),
         });
 
         await schema.validate(data, { abortEarly: false });
 
-        await signIn({
+        await api.forgotUserPassword({
           email: data.email,
-          password: data.password,
         });
 
-        history.push('/');
+        addToast({
+          type: 'success',
+          title: 'Verifique seu e-mail',
+          description: 'Enviamos um link para recuperação da sua senha.',
+        });
       } catch (err) {
         console.log(err);
-
-        setIsLoading(false);
-
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
 
@@ -63,14 +58,15 @@ const Login: React.FC = () => {
 
         addToast({
           type: 'error',
-          title: 'Erro na autenticação',
-          description: 'Ocorreu um erro ao fazer login. Cheque seus dados.',
+          title: 'Erro na recuperação de senha',
+          description:
+            'Ocorreu um erro ao tentar recuperar sua senha. Cheque seu e-mail.',
         });
       } finally {
         setIsLoading(false);
       }
     },
-    [addToast, history, signIn],
+    [addToast],
   );
 
   return (
@@ -78,22 +74,16 @@ const Login: React.FC = () => {
       <Link to="/">
         <img id="logo" src={Logo} alt="Google Keep Clone Logo" />
       </Link>
-      <h1>Entrar</h1>
+      <h1>Esqueci minha senha</h1>
       <Form ref={formRef} onSubmit={handleSubmit}>
         <Input autoFocus name="email" type="text" placeholder="E-mail" />
-        <Input name="password" type="password" placeholder="Senha" />
         <Button type="submit" loading={isLoading}>
-          Entrar
+          Recuperar
         </Button>
       </Form>
-      <Link id="forgot-password" to="/forgot-password">
-        Esqueci minha senha
-      </Link>
-      <Link id="signup" to="/signup">
-        Quero criar uma conta
-      </Link>
+      <Link to="/login">Me lembrei!</Link>
     </Container>
   );
 };
 
-export default Login;
+export default ForgotPassword;

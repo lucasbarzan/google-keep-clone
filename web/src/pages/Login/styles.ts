@@ -8,7 +8,7 @@ export const Container = styled.div`
   width: 100vw;
   height: 100vh;
 
-  > img {
+  #logo {
     width: 8rem;
     height: 8rem;
     margin-bottom: 2.4rem;
@@ -28,8 +28,17 @@ export const Container = styled.div`
   }
 
   > a {
-    color: var(--color-primary);
     text-decoration: none;
+  }
+
+  #forgot-password {
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    margin-bottom: 2.4rem;
+  }
+
+  #signup {
+    color: var(--color-primary);
     font-weight: 700;
   }
 `;

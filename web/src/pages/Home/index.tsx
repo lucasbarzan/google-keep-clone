@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Modal from 'react-modal';
 import { useLocation, useParams } from 'react-router-dom';
+import { MdLabelOutline } from 'react-icons/md';
 import CreateNoteBar from '../../components/CreateNoteBar';
 import Header from '../../components/Header';
 import Sidebar from '../../components/Sidebar';
@@ -12,12 +13,14 @@ import {
   BarAndNotes,
   Bar,
   Notes,
+  NoNotes,
   modalStyle,
 } from './styles';
 import { useTags } from '../../hooks/tags';
 import { useNotes } from '../../hooks/notes';
 import api from '../../services/api';
 import NoteStatus from '../../utils/NoteStatus';
+import { useToast } from '../../hooks/toast';
 
 interface Note {
   id: string;
@@ -40,47 +43,70 @@ const Home: React.FC = () => {
   const [openedNote, setOpenedNote] = useState({} as Note);
   Modal.setAppElement('#root');
 
+  const { addToast } = useToast();
   const { setTags, selectTag } = useTags();
   const { getNotes, setNotes } = useNotes();
 
   const { id: tagId } = useParams<HomeParams>();
   const { pathname } = useLocation();
 
+  // To know in which page we are
+  const isArchive = pathname === 'archive';
+  const isTag = !!tagId;
+
   useEffect(() => {
     const func = async () => {
-      const { data: tags } = await api.getAllTags();
-      setTags(tags);
+      try {
+        const { data: tags } = await api.getAllTags();
+        setTags(tags);
 
-      if (pathname === '/archive') {
-        // Archive page
-        selectTag('archive');
+        if (isArchive) {
+          // Archive page
+          selectTag('archive');
 
-        const { data: archivedNotes } = await api.getAllNotes({
-          status: NoteStatus.ARCHIVED,
+          const { data: archivedNotes } = await api.getAllNotes({
+            status: NoteStatus.ARCHIVED,
+          });
+          setNotes(archivedNotes);
+        } else if (isTag) {
+          // Tag page
+          selectTag(tagId);
+
+          const { data: notes } = await api.getAllNotes({
+            tagId,
+            status: NoteStatus.ACTIVE,
+          });
+          setNotes(notes);
+        } else {
+          // Home page
+          selectTag('notes');
+
+          const { data: notes } = await api.getAllNotes({
+            status: NoteStatus.ACTIVE,
+          });
+          setNotes(notes);
+        }
+      } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Erro ao acessar suas notas',
+          description:
+            'Verifique a conexão com a internet e recarregue a página.',
         });
-        setNotes(archivedNotes);
-      } else if (tagId) {
-        // Tag page
-        selectTag(tagId);
-
-        const { data: notes } = await api.getAllNotes({
-          tagId,
-          status: NoteStatus.ACTIVE,
-        });
-        setNotes(notes);
-      } else {
-        // Home page
-        selectTag('notes');
-
-        const { data: notes } = await api.getAllNotes({
-          status: NoteStatus.ACTIVE,
-        });
-        setNotes(notes);
       }
     };
 
     func();
-  }, [pathname, selectTag, setNotes, setTags, tagId]);
+  }, [
+    addToast,
+    isArchive,
+    isTag,
+    pathname,
+    selectTag,
+    setNotes,
+    setTags,
+    tagId,
+  ]);
 
   const notes = useMemo(() => getNotes(), [getNotes]);
 
@@ -123,13 +149,25 @@ const Home: React.FC = () => {
             <CreateNoteBar />
           </Bar>
           <Notes>
-            {notes.map(note => (
-              <NoteBlock
-                key={note.id}
-                note={note}
-                onOpenNote={handleOpenNote}
-              />
-            ))}
+            {notes.length > 0 ? (
+              notes.map(note => (
+                <NoteBlock
+                  key={note.id}
+                  note={note}
+                  isArchive={isArchive}
+                  onOpenNote={handleOpenNote}
+                />
+              ))
+            ) : (
+              <NoNotes>
+                <MdLabelOutline size="12rem" />
+                <span>
+                  {isTag
+                    ? 'Não há notas com este marcador ainda'
+                    : 'Não há notas ainda'}
+                </span>
+              </NoNotes>
+            )}
           </Notes>
         </BarAndNotes>
       </Contents>
@@ -141,7 +179,12 @@ const Home: React.FC = () => {
         style={modalStyle}
         contentLabel="Selected note modal"
       >
-        <NoteBlock isModal note={openedNote} onCloseNote={handleCloseNote} />
+        <NoteBlock
+          note={openedNote}
+          isModal
+          isArchive={isArchive}
+          onCloseNote={handleCloseNote}
+        />
       </Modal>
     </Container>
   );

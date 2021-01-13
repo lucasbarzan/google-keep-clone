@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable func-names */
 /* eslint-disable class-methods-use-this */
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
@@ -48,7 +50,7 @@ interface ForgotUserPasswordReq {
 }
 
 interface ResetUserPasswordReq {
-  old_password: string;
+  token: string;
   password: string;
   password_confirmation: string;
 }
@@ -112,7 +114,7 @@ interface LoginRes {
 
 /// ////////////////////////////////  ///// ///
 
-export default class api {
+class api {
   static axiosInstance: AxiosInstance = baseAPI('http://localhost:3333');
 
   /// /////////// USERS Endpoints /////////// ///
@@ -164,8 +166,11 @@ export default class api {
 
   static async updateNote({
     id,
-    ...body
+    ...rest
   }: UpdateNoteReq): Promise<AxiosResponse<Note>> {
+    const body = { ...rest };
+    if (body.tag_id === '') body.tag_id = 'null';
+    if (body.title === '') body.title = 'null';
     const response = await api.axiosInstance.patch<Note>(`notes/${id}`, body);
     return response;
   }
@@ -214,3 +219,5 @@ export default class api {
     await api.axiosInstance.delete<void>(`tags/${id}`);
   }
 }
+
+export default api;

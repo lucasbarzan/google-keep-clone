@@ -1,7 +1,11 @@
 import styled from 'styled-components';
 import { shade } from 'polished';
 
-export const Container = styled.button`
+interface ContainerProps {
+  loading: boolean;
+}
+
+export const Container = styled.button<ContainerProps>`
   background: var(--color-primary);
   height: 5.6rem;
   border-radius: 1rem;
@@ -14,6 +18,11 @@ export const Container = styled.button`
   transition: background-color 0.2s;
 
   &:hover {
-    background: ${shade(0.2, '#ffba00')};
+    background: ${shade(0.12, '#ffba00')};
+  }
+
+  &:disabled {
+    background: ${shade(0.12, '#ffba00')};
+    cursor: progress;
   }
 `;

@@ -17,7 +17,6 @@ interface NotesContextData {
   addNote(note: Note): void;
   updateNote(note: Note): void;
   removeNote(id: string): void;
-  archiveNote(id: string): void;
 }
 
 const NotesContext = createContext<NotesContextData>({} as NotesContextData);
@@ -53,10 +52,6 @@ const NotesProvider: React.FC = ({ children }) => {
     setAllNotes(state => state.filter(note => note.id !== id));
   }, []);
 
-  const archiveNote = useCallback((id: string) => {
-    setAllNotes(state => state.filter(note => note.id !== id));
-  }, []);
-
   return (
     <NotesContext.Provider
       value={{
@@ -65,7 +60,6 @@ const NotesProvider: React.FC = ({ children }) => {
         addNote,
         updateNote,
         removeNote,
-        archiveNote,
       }}
     >
       {children}

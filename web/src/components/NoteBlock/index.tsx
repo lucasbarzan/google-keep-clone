@@ -8,6 +8,7 @@ import {
   MdDelete,
   MdLabel,
   MdClose,
+  MdUnarchive,
 } from 'react-icons/md';
 import CircularButton from '../CircularButton';
 import { useNotes } from '../../hooks/notes';
@@ -26,6 +27,7 @@ import {
 } from './styles';
 import api from '../../services/api';
 import { useTags } from '../../hooks/tags';
+import { useToast } from '../../hooks/toast';
 
 interface Tag {
   id: string;
@@ -45,6 +47,7 @@ interface NoteBlockProps {
   onOpenNote?: (note: Note) => void;
   onCloseNote?: () => void;
   isModal?: boolean;
+  isArchive?: boolean;
 }
 
 const NoteBlock: React.FC<NoteBlockProps> = ({
@@ -52,10 +55,12 @@ const NoteBlock: React.FC<NoteBlockProps> = ({
   onOpenNote = () => {},
   onCloseNote = () => {},
   isModal = false,
+  isArchive = false,
 }) => {
   const [note, setNote] = useState(inputNote);
 
-  const { updateNote, removeNote, archiveNote } = useNotes();
+  const { addToast } = useToast();
+  const { updateNote, removeNote } = useNotes();
   const { getTags } = useTags();
 
   const noteColor = useMemo(() => convertColor(note.color), [note.color]);
@@ -81,109 +86,170 @@ const NoteBlock: React.FC<NoteBlockProps> = ({
   );
 
   const handleChangeColor = useCallback(async () => {
-    const newColor = getNextColor(note.color);
+    try {
+      const newColor = getNextColor(note.color);
 
-    // Change color on API
-    await api.updateNote({
-      id: note.id,
-      color: newColor,
-    });
+      // Change color on API
+      await api.updateNote({
+        id: note.id,
+        color: newColor,
+      });
 
-    // Change color on hook
-    updateNote({
-      ...note,
-      color: newColor,
-    });
+      // Change color on hook
+      updateNote({
+        ...note,
+        color: newColor,
+      });
 
-    // Change color locally
-    setNote({
-      ...note,
-      color: newColor,
-    });
-  }, [note, updateNote]);
+      // Change color locally
+      setNote({
+        ...note,
+        color: newColor,
+      });
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Erro ao atualizar nota',
+      });
+    }
+  }, [addToast, note, updateNote]);
 
   const handleChangeTag = useCallback(async () => {
-    const lastIndex = tags.findIndex(t => t.id === note.tag?.id);
-    const newIndex = (lastIndex + 1) % tags.length;
-    const newTag = lastIndex === -1 ? tags[0] : tags[newIndex];
+    try {
+      const lastIndex = tags.findIndex(t => t.id === note.tag?.id);
+      const newIndex = (lastIndex + 1) % tags.length;
+      const newTag = lastIndex === -1 ? tags[0] : tags[newIndex];
 
-    // Change tag on API
-    await api.updateNote({
-      id: note.id,
-      tag_id: newTag.id,
-    });
+      // Change tag on API
+      await api.updateNote({
+        id: note.id,
+        tag_id: newTag.id,
+      });
 
-    // Change tag on hook
-    updateNote({
-      ...note,
-      tag: newTag,
-    });
+      // Change tag on hook
+      updateNote({
+        ...note,
+        tag: newTag,
+      });
 
-    // Change tag locally
-    setNote({
-      ...note,
-      tag: newTag,
-    });
-  }, [note, tags, updateNote]);
+      // Change tag locally
+      setNote({
+        ...note,
+        tag: newTag,
+      });
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Erro ao atualizar nota',
+      });
+    }
+  }, [addToast, note, tags, updateNote]);
 
   const handleRemoveTag = useCallback(async () => {
-    // Remove tag on API
-    await api.updateNote({
-      id: note.id,
-      tag_id: null,
-    });
+    try {
+      // Remove tag on API
+      await api.updateNote({
+        id: note.id,
+        tag_id: '',
+      });
 
-    // Remove tag on hook
-    updateNote({
-      ...note,
-      tag: {} as Tag,
-    });
+      // Remove tag on hook
+      updateNote({
+        ...note,
+        tag: {} as Tag,
+      });
 
-    // Remove tag locally
-    setNote({
-      ...note,
-      tag: {} as Tag,
-    });
-  }, [note, updateNote]);
+      // Remove tag locally
+      setNote({
+        ...note,
+        tag: {} as Tag,
+      });
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Erro ao atualizar nota',
+      });
+    }
+  }, [addToast, note, updateNote]);
 
   const handleArchiveNote = useCallback(async () => {
-    // Archive note
-    await api.archiveNote({
-      id: note.id,
-    });
+    try {
+      // Archive note
+      await api.archiveNote({
+        id: note.id,
+      });
 
-    archiveNote(note.id);
+      removeNote(note.id);
 
-    // Close modal (if open)
-    onCloseNote();
-  }, [archiveNote, note.id, onCloseNote]);
+      // Close modal (if open)
+      onCloseNote();
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Erro ao arquivar nota',
+      });
+    }
+  }, [note.id, removeNote, onCloseNote, addToast]);
+
+  const handleUnarchiveNote = useCallback(async () => {
+    try {
+      // Unarchive note
+      await api.unarchiveNote({
+        id: note.id,
+      });
+
+      removeNote(note.id);
+
+      // Close modal (if open)
+      onCloseNote();
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Erro ao desarquivar nota',
+      });
+    }
+  }, [addToast, note.id, onCloseNote, removeNote]);
 
   const handleDeleteNote = useCallback(async () => {
-    // Delete note
-    await api.deleteNote({
-      id: note.id,
-    });
+    try {
+      // Delete note
+      await api.deleteNote({
+        id: note.id,
+      });
 
-    removeNote(note.id);
+      removeNote(note.id);
 
-    // Close modal (if open)
-    onCloseNote();
-  }, [note.id, onCloseNote, removeNote]);
+      // Close modal (if open)
+      onCloseNote();
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Erro ao deletar nota',
+      });
+    }
+  }, [addToast, note.id, onCloseNote, removeNote]);
 
   const handleSaveAndCloseNote = useCallback(async () => {
-    // Update note
-    await api.updateNote({
-      id: note.id,
-      title: note.title,
-      body: note.body,
-      color: note.color,
-      tag_id: note.tag?.id,
-    });
-    updateNote(note);
-
-    // Close modal (if open)
-    onCloseNote();
-  }, [note, onCloseNote, updateNote]);
+    try {
+      // Update note
+      await api.updateNote({
+        id: note.id,
+        title: note.title,
+        body: note.body,
+        color: note.color,
+        tag_id: note.tag?.id,
+      });
+      updateNote(note);
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Erro ao salvar nota',
+      });
+    } finally {
+      // Close modal (if open)
+      onCloseNote();
+    }
+  }, [addToast, note, onCloseNote, updateNote]);
 
   return (
     <Container
@@ -228,10 +294,10 @@ const NoteBlock: React.FC<NoteBlockProps> = ({
           style={{ display: tags.length > 0 ? 'flex' : 'none' }}
         />
         <CircularButton
-          icon={MdArchive}
+          icon={isArchive ? MdUnarchive : MdArchive}
           iconSize={optionIconSize}
           containerSize={optionContainerSize}
-          onClick={handleArchiveNote}
+          onClick={isArchive ? handleUnarchiveNote : handleArchiveNote}
         />
         <CircularButton
           icon={MdDelete}

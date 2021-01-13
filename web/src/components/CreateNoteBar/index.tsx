@@ -3,6 +3,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { MdClose, MdColorLens, MdLabel } from 'react-icons/md';
 import { useNotes } from '../../hooks/notes';
 import { useTags } from '../../hooks/tags';
+import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import convertColor from '../../utils/convertColor';
 import getNextColor from '../../utils/getNextColor';
@@ -38,6 +39,7 @@ const CreateNoteBar: React.FC = () => {
   const [color, setColor] = useState(0);
   const [tag, setTag] = useState<Tag>({} as Tag);
 
+  const { addToast } = useToast();
   const { addNote } = useNotes();
   const { getTags } = useTags();
 
@@ -65,20 +67,27 @@ const CreateNoteBar: React.FC = () => {
 
   const handleAddNote = useCallback(
     async (noteToAdd: Omit<Note, 'id' | 'color' | 'tag'>) => {
-      const response = await api.createNote({
-        title: noteToAdd.title,
-        body: noteToAdd.body,
-        color,
-        tag_id: tag?.id,
-      });
+      try {
+        const response = await api.createNote({
+          title: noteToAdd.title,
+          body: noteToAdd.body,
+          color,
+          tag_id: tag?.id,
+        });
 
-      const addedNote = response.data;
+        const addedNote = response.data;
 
-      addNote(addedNote);
-
-      setColor(0);
+        addNote(addedNote);
+      } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Erro ao adicionar nota',
+        });
+      } finally {
+        setColor(0);
+      }
     },
-    [addNote, color, tag?.id],
+    [addNote, addToast, color, tag?.id],
   );
 
   const handleFocus = useCallback(() => {

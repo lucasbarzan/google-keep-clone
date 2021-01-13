@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { MdDelete, MdCheck } from 'react-icons/md';
 import { useTags } from '../../hooks/tags';
+import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import CircularButton from '../CircularButton';
 
@@ -20,6 +21,7 @@ const EditTagsModal: React.FC<EditTagsModalProps> = ({ onCloseModal }) => {
   const [newTag, setNewTag] = useState('');
   const [tempTags, setTempTags] = useState<{ [key: string]: string }>({});
 
+  const { addToast } = useToast();
   const { getTags, addTag, updateTag, removeTag } = useTags();
 
   const tags = useMemo(() => getTags(), [getTags]);
@@ -38,36 +40,57 @@ const EditTagsModal: React.FC<EditTagsModalProps> = ({ onCloseModal }) => {
   );
 
   const handleCreateTag = useCallback(async () => {
-    const response = await api.createTag({
-      name: newTag,
-    });
+    try {
+      const response = await api.createTag({
+        name: newTag,
+      });
 
-    const addedTag = response.data;
-    addTag(addedTag);
-  }, [addTag, newTag]);
+      const addedTag = response.data;
+      addTag(addedTag);
+    } catch (err) {
+      addToast({
+        type: 'error',
+        title: 'Erro ao criar marcador',
+      });
+    }
+  }, [addTag, addToast, newTag]);
 
   const handleSaveTag = useCallback(
     async (tag: Tag) => {
-      const response = await api.updateTag({
-        id: tag.id,
-        name: tag.name,
-      });
+      try {
+        const response = await api.updateTag({
+          id: tag.id,
+          name: tag.name,
+        });
 
-      const updatedTag = response.data;
-      updateTag(updatedTag);
+        const updatedTag = response.data;
+        updateTag(updatedTag);
+      } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Erro ao salvar marcador',
+        });
+      }
     },
-    [updateTag],
+    [addToast, updateTag],
   );
 
   const handleDeleteTag = useCallback(
     async (tagId: string) => {
-      await api.deleteTag({
-        id: tagId,
-      });
+      try {
+        await api.deleteTag({
+          id: tagId,
+        });
 
-      removeTag(tagId);
+        removeTag(tagId);
+      } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Erro ao deletar marcador',
+        });
+      }
     },
-    [removeTag],
+    [addToast, removeTag],
   );
 
   return (

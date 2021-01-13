@@ -5,6 +5,7 @@ import React, {
   useContext,
   useMemo,
 } from 'react';
+import { AxiosError } from 'axios';
 import api from '../services/api';
 
 interface User {
@@ -39,6 +40,29 @@ const AuthProvider: React.FC = ({ children }) => {
     if (token && user) {
       api.axiosInstance.defaults.headers.authorization = `Bearer ${token}`;
 
+      api.axiosInstance.interceptors.response.use(
+        response =>
+          // Return a successful response back to the calling service
+          response,
+        (error: AxiosError) => {
+          // Logout user if token expired
+          if (error.response?.status === 401) {
+            // SIGN OUT
+            localStorage.removeItem('@KeepClone:token');
+            localStorage.removeItem('@KeepClone:user');
+            setData({} as AuthState);
+
+            return new Promise((resolve, reject) => {
+              reject(error);
+            });
+          }
+          // Return any error which is not due to authentication back to the calling service
+          return new Promise((resolve, reject) => {
+            reject(error);
+          });
+        },
+      );
+
       return { token, user: JSON.parse(user) };
     }
 
@@ -57,6 +81,29 @@ const AuthProvider: React.FC = ({ children }) => {
     localStorage.setItem('@KeepClone:user', JSON.stringify(user));
 
     api.axiosInstance.defaults.headers.authorization = `Bearer ${token}`;
+
+    api.axiosInstance.interceptors.response.use(
+      response =>
+        // Return a successful response back to the calling service
+        response,
+      (error: AxiosError) => {
+        // Logout user if token expired
+        if (error.response?.status === 401) {
+          // SIGN OUT
+          localStorage.removeItem('@KeepClone:token');
+          localStorage.removeItem('@KeepClone:user');
+          setData({} as AuthState);
+
+          return new Promise((resolve, reject) => {
+            reject(error);
+          });
+        }
+        // Return any error which is not due to authentication back to the calling service
+        return new Promise((resolve, reject) => {
+          reject(error);
+        });
+      },
+    );
 
     setData({ token, user });
   }, []);

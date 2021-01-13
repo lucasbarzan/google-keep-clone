@@ -29,6 +29,22 @@ export const Notes = styled.div`
   margin: 2.4rem auto;
 `;
 
+export const NoNotes = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  > svg {
+    margin-bottom: 2rem;
+    color: var(--color-icon-light);
+  }
+
+  span {
+    font-size: 2rem;
+    color: var(--color-text-secondary);
+  }
+`;
+
 export const modalStyle: ModalStyles = {
   overlay: {
     position: 'fixed',

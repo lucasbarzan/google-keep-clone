@@ -3,10 +3,10 @@ import React, {
   useCallback,
   InputHTMLAttributes,
   ChangeEvent,
-  useMemo,
 } from 'react';
 import { MdSearch, MdClose } from 'react-icons/md';
 import { useNotes } from '../../hooks/notes';
+import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 import NoteStatus from '../../utils/NoteStatus';
 
@@ -20,6 +20,7 @@ const SearchBar: React.FC<InputHTMLAttributes<HTMLInputElement>> = ({
   const [isFocused, setIsFocused] = useState(false);
   const [showClearButton, setShowClearButton] = useState(false);
 
+  const { addToast } = useToast();
   const { setNotes } = useNotes();
 
   const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -37,14 +38,21 @@ const SearchBar: React.FC<InputHTMLAttributes<HTMLInputElement>> = ({
 
   const handleSearch = useCallback(
     async (search?: string) => {
-      const response = await api.getAllNotes({
-        status: NoteStatus.ACTIVE, // ???
-        query: search || query,
-      });
+      try {
+        const response = await api.getAllNotes({
+          status: NoteStatus.ACTIVE, // ???
+          query: search || query,
+        });
 
-      setNotes(response.data);
+        setNotes(response.data);
+      } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Erro ao pesquisar notas',
+        });
+      }
     },
-    [query, setNotes],
+    [addToast, query, setNotes],
   );
 
   const handleInputKeyDown = useCallback(
