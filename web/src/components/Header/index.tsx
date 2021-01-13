@@ -10,9 +10,10 @@ import { useAuth } from '../../hooks/auth';
 
 interface HeaderProps {
   onToggleSidebar(): void;
+  searchIn: React.MutableRefObject<string>;
 }
 
-const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
+const Header: React.FC<HeaderProps> = ({ onToggleSidebar, searchIn }) => {
   const { signOut } = useAuth();
 
   return (
@@ -22,7 +23,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
         <img src={Logo} alt="Google Keep Clone Logo" />
         <h1>Keep Clone</h1>
       </Link>
-      <SearchBar name="search" />
+      <SearchBar searchIn={searchIn} name="search" />
       <CircularButton id="exit-button" icon={MdExitToApp} onClick={signOut} />
     </Container>
   );

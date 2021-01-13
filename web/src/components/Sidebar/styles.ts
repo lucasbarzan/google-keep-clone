@@ -11,7 +11,7 @@ export const Container = styled.div<ContainerProps>`
   width: 28rem;
   height: calc(100vh - 8rem);
   margin-top: 0.8rem;
-
+  background-color: var(--color-background);
   overflow: hidden;
   max-width: ${props => (props.show ? '28rem' : '0rem')};
   transition: max-width 0.12s ease-in-out;
@@ -30,6 +30,10 @@ export const Container = styled.div<ContainerProps>`
       color: var(--color-primary);
       text-decoration: none;
     }
+  }
+
+  @media (max-width: 320px) {
+    position: absolute;
   }
 `;
 

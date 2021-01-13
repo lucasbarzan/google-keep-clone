@@ -75,7 +75,10 @@ const CreateNoteBar: React.FC = () => {
           tag_id: tag?.id,
         });
 
-        const addedNote = response.data;
+        const addedNote = {
+          ...response.data,
+          tag,
+        };
 
         addNote(addedNote);
       } catch (err) {
@@ -87,7 +90,7 @@ const CreateNoteBar: React.FC = () => {
         setColor(0);
       }
     },
-    [addNote, addToast, color, tag?.id],
+    [addNote, addToast, color, tag],
   );
 
   const handleFocus = useCallback(() => {

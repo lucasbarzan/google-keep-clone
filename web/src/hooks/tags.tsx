@@ -1,4 +1,5 @@
 import React, { createContext, useState, useCallback, useContext } from 'react';
+import { useNotes } from './notes';
 
 export interface TagItem {
   id: string;
@@ -20,6 +21,8 @@ const TagsContext = createContext<TagsContextData>({} as TagsContextData);
 const TagsProvider: React.FC = ({ children }) => {
   const [allTags, setAllTags] = useState<TagItem[]>([]);
   const [selectedTagId, setSelectedTagId] = useState('');
+
+  const { getNotes, setNotes } = useNotes();
 
   const getTags = useCallback((): TagItem[] => {
     return allTags;
@@ -43,9 +46,24 @@ const TagsProvider: React.FC = ({ children }) => {
     [allTags],
   );
 
-  const removeTag = useCallback((id: string) => {
-    setAllTags(state => state.filter(tagItem => tagItem.id !== id));
-  }, []);
+  const removeTag = useCallback(
+    (id: string) => {
+      setAllTags(state => state.filter(tagItem => tagItem.id !== id));
+
+      const notes = getNotes();
+      const notesAfterTagRemoval = notes.map(note => {
+        if (note.tag?.id === id) {
+          return {
+            ...note,
+            tag: undefined,
+          };
+        }
+        return note;
+      });
+      setNotes(notesAfterTagRemoval);
+    },
+    [getNotes, setNotes],
+  );
 
   const selectTag = useCallback((id: string) => {
     setSelectedTagId(id);

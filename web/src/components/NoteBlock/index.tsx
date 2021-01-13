@@ -262,21 +262,29 @@ const NoteBlock: React.FC<NoteBlockProps> = ({
         isModal={isModal}
         onClick={() => onOpenNote(note)}
       >
-        <strong contentEditable={isModal} onInput={e => handleInputTitle(e)}>
+        <strong
+          contentEditable={isModal}
+          onInput={e => handleInputTitle(e)}
+          suppressContentEditableWarning
+        >
           {inputNote.title}
         </strong>
-        <span contentEditable={isModal} onInput={e => handleInputBody(e)}>
+        <span
+          contentEditable={isModal}
+          onInput={e => handleInputBody(e)}
+          suppressContentEditableWarning
+        >
           {inputNote.body}
         </span>
       </NoteArea>
       <TagOptions expand={!!note.tag?.name}>
-        <span>{note.tag?.name}</span>
+        <span>{note.tag && note.tag.name}</span>
         <CircularButton
           icon={MdClose}
           iconSize={tagOptionIconSize}
           containerSize={tagOptionContainerSize}
           onClick={handleRemoveTag}
-          style={{ display: note.tag?.name ? 'flex' : 'none' }}
+          style={{ display: note.tag && note.tag.name ? 'flex' : 'none' }}
         />
       </TagOptions>
       <Options id="options" isModal={isModal}>

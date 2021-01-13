@@ -28,7 +28,7 @@ interface OptionsProps {
 export const Container = styled.div<ContainerProps>`
   display: flex;
   flex-direction: column;
-  width: ${props => (props.isModal ? '60rem' : '24rem')};
+  width: ${props => (props.isModal ? '30rem' : '24rem')};
   min-height: ${props => (props.isModal ? '18rem' : '10rem')};
   max-height: 42rem;
   border: 1px solid ${props => (props.isModal ? 'transparent' : '#e0e0e0')};
@@ -49,6 +49,14 @@ export const Container = styled.div<ContainerProps>`
     #options {
       opacity: 1;
     }
+  }
+
+  @media (min-width: 768px) {
+    width: ${props => (props.isModal ? '42rem' : '24rem')};
+  }
+
+  @media (min-width: 1100px) {
+    width: ${props => (props.isModal ? '60rem' : '24rem')};
   }
 `;
 

@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import Modal from 'react-modal';
 import { useLocation, useParams } from 'react-router-dom';
 import { MdLabelOutline } from 'react-icons/md';
@@ -51,8 +57,9 @@ const Home: React.FC = () => {
   const { pathname } = useLocation();
 
   // To know in which page we are
-  const isArchive = pathname === 'archive';
+  const isArchive = pathname === '/archive';
   const isTag = !!tagId;
+  const searchIn = useRef('all');
 
   useEffect(() => {
     const func = async () => {
@@ -68,6 +75,8 @@ const Home: React.FC = () => {
             status: NoteStatus.ARCHIVED,
           });
           setNotes(archivedNotes);
+
+          searchIn.current = 'archive';
         } else if (isTag) {
           // Tag page
           selectTag(tagId);
@@ -77,6 +86,8 @@ const Home: React.FC = () => {
             status: NoteStatus.ACTIVE,
           });
           setNotes(notes);
+
+          searchIn.current = tagId;
         } else {
           // Home page
           selectTag('notes');
@@ -85,6 +96,8 @@ const Home: React.FC = () => {
             status: NoteStatus.ACTIVE,
           });
           setNotes(notes);
+
+          searchIn.current = 'all';
         }
       } catch (err) {
         addToast({
@@ -141,7 +154,7 @@ const Home: React.FC = () => {
 
   return (
     <Container>
-      <Header onToggleSidebar={toggleSidebar} />
+      <Header searchIn={searchIn} onToggleSidebar={toggleSidebar} />
       <Contents>
         <Sidebar show={showSidebar} />
         <BarAndNotes>
@@ -162,9 +175,7 @@ const Home: React.FC = () => {
               <NoNotes>
                 <MdLabelOutline size="12rem" />
                 <span>
-                  {isTag
-                    ? 'Não há notas com este marcador ainda'
-                    : 'Não há notas ainda'}
+                  {isTag ? 'Não há notas com este marcador' : 'Não há notas'}
                 </span>
               </NoNotes>
             )}

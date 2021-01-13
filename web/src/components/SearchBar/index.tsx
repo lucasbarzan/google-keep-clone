@@ -13,10 +13,12 @@ import NoteStatus from '../../utils/NoteStatus';
 import CircularButton from '../CircularButton';
 import { Container } from './styles';
 
-const SearchBar: React.FC<InputHTMLAttributes<HTMLInputElement>> = ({
-  ...rest
-}) => {
-  const [query, setQuery] = useState('');
+interface SearchBarProps extends InputHTMLAttributes<HTMLInputElement> {
+  searchIn: React.MutableRefObject<string>;
+}
+
+const SearchBar: React.FC<SearchBarProps> = ({ searchIn, ...rest }) => {
+  const [inputQuery, setInputQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [showClearButton, setShowClearButton] = useState(false);
 
@@ -24,7 +26,7 @@ const SearchBar: React.FC<InputHTMLAttributes<HTMLInputElement>> = ({
   const { setNotes } = useNotes();
 
   const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value);
+    setInputQuery(e.target.value);
   }, []);
 
   const handleInputFocus = useCallback(() => {
@@ -37,12 +39,30 @@ const SearchBar: React.FC<InputHTMLAttributes<HTMLInputElement>> = ({
   }, []);
 
   const handleSearch = useCallback(
-    async (search?: string) => {
+    async (query: string) => {
       try {
-        const response = await api.getAllNotes({
-          status: NoteStatus.ACTIVE, // ???
-          query: search || query,
-        });
+        let response;
+
+        if (searchIn.current === 'all') {
+          // All notes
+          response = await api.getAllNotes({
+            status: NoteStatus.ACTIVE,
+            query,
+          });
+        } else if (searchIn.current === 'archive') {
+          // Archived notes
+          response = await api.getAllNotes({
+            status: NoteStatus.ARCHIVED,
+            query,
+          });
+        } else {
+          // A tag's notes
+          response = await api.getAllNotes({
+            status: NoteStatus.ACTIVE,
+            query,
+            tagId: searchIn.current,
+          });
+        }
 
         setNotes(response.data);
       } catch (err) {
@@ -52,21 +72,21 @@ const SearchBar: React.FC<InputHTMLAttributes<HTMLInputElement>> = ({
         });
       }
     },
-    [addToast, query, setNotes],
+    [addToast, searchIn, setNotes],
   );
 
   const handleInputKeyDown = useCallback(
     e => {
       if (e.keyCode === 13) {
-        handleSearch();
+        handleSearch(inputQuery);
       }
     },
-    [handleSearch],
+    [handleSearch, inputQuery],
   );
 
   const handleClear = useCallback(() => {
     setShowClearButton(false);
-    setQuery('');
+    setInputQuery('');
 
     handleSearch('');
   }, [handleSearch]);
@@ -77,7 +97,7 @@ const SearchBar: React.FC<InputHTMLAttributes<HTMLInputElement>> = ({
       <input
         type="text"
         placeholder="Pesquisar"
-        value={query}
+        value={inputQuery}
         onChange={handleInputChange}
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
