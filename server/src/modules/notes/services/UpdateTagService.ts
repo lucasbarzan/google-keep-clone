@@ -23,7 +23,7 @@ class UpdateTagService {
 
     if (tag.user_id !== user_id) throw new AppError('You cannot update this tag.', 403);
 
-    if (name) tag.name = name;
+    if (typeof name !== 'undefined') tag.name = name;
 
     await this.tagsRepository.save(tag);
 

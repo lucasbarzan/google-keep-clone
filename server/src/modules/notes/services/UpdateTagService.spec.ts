@@ -37,6 +37,26 @@ describe('UpdateTag', () => {
     expect(updatedTag.name).toBe('New name');
   });
 
+  it("should be able to 'update' tag", async () => {
+    const user = await fakeUsersRepository.create({
+      email: 'user@email.com',
+      password: '123456'
+    });
+
+    const tag = await fakeTagsRepository.create({
+      user_id: user.id,
+      name: 'Name'
+    });
+
+    const updatedTag = await updateTag.execute({
+      user_id: user.id,
+      id: tag.id,
+    });
+
+    expect(updatedTag.id).toBe(tag.id);
+    expect(updatedTag.name).toBe(tag.name);
+  });
+
   it('should not be able to update tag for non-existing user', async () => {
     const user = await fakeUsersRepository.create({
       email: 'user@email.com',

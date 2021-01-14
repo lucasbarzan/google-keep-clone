@@ -16,8 +16,8 @@ passwordRouter.put(
   ensureAuthenticated,
   celebrate({
     [Segments.BODY]: {
-      old_password: Joi.string(),
-      password: Joi.string(),
+      old_password: Joi.string().min(6),
+      password: Joi.string().min(6),
       password_confirmation: Joi.string().valid(Joi.ref('password')),
     },
   }),
@@ -38,8 +38,8 @@ passwordRouter.post(
   celebrate({
     [Segments.BODY]: {
       token: Joi.string().uuid().required(),
-      password: Joi.string().required(),
-      password_confirmation: Joi.string().required().valid(Joi.ref('password')),
+      password: Joi.string().min(6).required(),
+      password_confirmation: Joi.string().min(6).required().valid(Joi.ref('password')),
     },
   }),
   resetPasswordController.create,

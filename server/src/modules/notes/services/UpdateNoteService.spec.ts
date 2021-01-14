@@ -56,7 +56,7 @@ describe('UpdateNote', () => {
     expect(updatedNote.title).toBe('New Title');
     expect(updatedNote.body).toBe('New Body');
     expect(updatedNote.color).toBe(NoteColors.Pink);
-    expect(updatedNote.tag_id).toBe(newTag.id);
+    expect(updatedNote.tag?.id).toBe(newTag.id);
   });
 
   it("should be able to update note's title", async () => {
@@ -85,7 +85,7 @@ describe('UpdateNote', () => {
     expect(updatedNote.title).toBe('New Title');
     expect(updatedNote.body).toBe(note.body);
     expect(updatedNote.color).toBe(note.color);
-    expect(updatedNote.tag_id).toBe(note.tag_id);
+    expect(updatedNote.tag?.id).toBe(note.tag_id);
   });
 
   it("should be able to update note's body", async () => {
@@ -114,7 +114,7 @@ describe('UpdateNote', () => {
     expect(updatedNote.title).toBe(note.title);
     expect(updatedNote.body).toBe('New Body');
     expect(updatedNote.color).toBe(note.color);
-    expect(updatedNote.tag_id).toBe(note.tag_id);
+    expect(updatedNote.tag?.id).toBe(note.tag_id);
   });
 
   it("should be able to update note's color", async () => {
@@ -143,7 +143,7 @@ describe('UpdateNote', () => {
     expect(updatedNote.title).toBe(note.title);
     expect(updatedNote.body).toBe(note.body);
     expect(updatedNote.color).toBe(NoteColors.Pink);
-    expect(updatedNote.tag_id).toBe(note.tag_id);
+    expect(updatedNote.tag?.id).toBe(note.tag_id);
   });
 
   it("should be able to update note's tag", async () => {
@@ -177,7 +177,36 @@ describe('UpdateNote', () => {
     expect(updatedNote.title).toBe(note.title);
     expect(updatedNote.body).toBe(note.body);
     expect(updatedNote.color).toBe(note.color);
-    expect(updatedNote.tag_id).toBe(newTag.id);
+    expect(updatedNote.tag?.id).toBe(newTag.id);
+  });
+
+  it("should be able to 'remove' note's tag", async () => {
+    const user = await fakeUsersRepository.create({
+      email: 'user@email.com',
+      password: '123456'
+    });
+
+    const note = await fakeNotesRepository.create({
+      user_id: user.id,
+      title: 'Title',
+      body: 'Body',
+      color: NoteColors.NoColor,
+      status: NoteStatus.ACTIVE,
+    });
+
+    const updatedNote = await updateNote.execute({
+      user_id: user.id,
+      id: note.id,
+      tag_id: '',
+    });
+
+    expect(updatedNote.id).toBe(note.id);
+    expect(updatedNote.status).toBe(note.status);
+    expect(updatedNote.user_id).toBe(user.id);
+    expect(updatedNote.title).toBe(note.title);
+    expect(updatedNote.body).toBe(note.body);
+    expect(updatedNote.color).toBe(note.color);
+    expect(updatedNote.tag).toBe(null);
   });
 
   it('should not be able to update note for non-existing user', async () => {

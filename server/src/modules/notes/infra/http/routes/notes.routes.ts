@@ -35,10 +35,10 @@ notesRouter.post(
   '/',
   celebrate({
     [Segments.BODY]: {
-      title: Joi.string().allow('', 'null'),
-      body: Joi.string().allow('null').required(),
+      title: Joi.string().max(255).allow(''),
+      body: Joi.string().max(65000).required(),
       color: Joi.number().valid(...getEnumValues(NoteColors)).required(),
-      tag_id: Joi.string().allow('', 'null'),
+      tag_id: Joi.string().uuid().allow(''),
     },
   }),
   notesController.create,
@@ -51,10 +51,10 @@ notesRouter.patch(
       id: Joi.string().uuid().required(),
     },
     [Segments.BODY]: {
-      title: Joi.string().allow('', 'null'),
-      body: Joi.string(),
+      title: Joi.string().max(255).allow(''),
+      body: Joi.string().max(65000),
       color: Joi.number().valid(...getEnumValues(NoteColors)),
-      tag_id: Joi.string().allow('', 'null'),
+      tag_id: Joi.string().uuid().allow(''),
     },
   }),
   notesController.update,

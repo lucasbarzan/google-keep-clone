@@ -18,7 +18,7 @@ tagsRouter.post(
   '/',
   celebrate({
     [Segments.BODY]: {
-      name: Joi.string().required(),
+      name: Joi.string().max(255).required(),
     },
   }),
   tagsController.create,
@@ -31,7 +31,7 @@ tagsRouter.patch(
       id: Joi.string().uuid().required(),
     },
     [Segments.BODY]: {
-      name: Joi.string().required(),
+      name: Joi.string().max(255),
     },
   }),
   tagsController.update,

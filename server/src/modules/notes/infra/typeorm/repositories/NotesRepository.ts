@@ -55,11 +55,11 @@ class NotesRepository implements INotesRepository {
   }
 
   public async create(noteData: ICreateNoteDTO): Promise<Note> {
-    const Note = this.ormRepository.create(noteData);
+    const note = this.ormRepository.create(noteData);
 
-    await this.ormRepository.save(Note);
+    await this.ormRepository.save(note);
 
-    return Note;
+    return note;
   }
 
   public async save(Note: Note): Promise<Note> {

@@ -26,7 +26,7 @@ class Note {
   user_id: string;
 
   @Column({ type: 'varchar' })
-  title?: string | null;
+  title: string | null;
 
   @Column()
   body: string;
@@ -36,11 +36,11 @@ class Note {
 
   @ManyToOne(() => Tag)
   @JoinColumn({ name: 'tag_id' })
-  tag?: Tag | null;
+  tag: Tag | null;
 
   @Exclude()
   @Column({ type: 'uuid' })
-  tag_id?: string | null;
+  tag_id: string | null;
 
   @Column({ enum: NoteStatus })
   status: number;

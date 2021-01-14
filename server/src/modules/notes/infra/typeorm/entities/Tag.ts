@@ -17,7 +17,7 @@ class Tag {
 
   @Exclude()
   @Column('uuid')
-  user_id: string;
+  user_id: string | null;
 
   @CreateDateColumn()
   created_at: Date;

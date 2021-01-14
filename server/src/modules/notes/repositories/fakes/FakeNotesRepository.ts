@@ -23,7 +23,7 @@ class FakeNotesRepository implements INotesRepository {
 
     if (query) {
       notes = notes.filter(noteItem =>
-        noteItem.title.includes(query) || noteItem.body.includes(query)
+        noteItem.title?.includes(query) || noteItem.body.includes(query)
       )
     }
 
