@@ -18,16 +18,19 @@ interface NotesContextData {
   addNote(note: Note): void;
   updateNote(note: Note): void;
   removeNote(id: string): void;
-  getCurrentPage(): number;
-  setCurrentPage(count: number): void;
+  getNotesQuery(): string;
+  setNotesQuery(query: string): void;
   getNotesCount(): number;
   setNotesCount(count: number): void;
+  getCurrentPage(): number;
+  setCurrentPage(count: number): void;
 }
 
 const NotesContext = createContext<NotesContextData>({} as NotesContextData);
 
 const NotesProvider: React.FC = ({ children }) => {
   const [allNotes, setAllNotes] = useState<Note[]>([]);
+  const [query, setQuery] = useState('');
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(0);
 
@@ -66,6 +69,14 @@ const NotesProvider: React.FC = ({ children }) => {
     setAllNotes(state => state.filter(note => note.id !== id));
   }, []);
 
+  const getNotesQuery = useCallback(() => {
+    return query;
+  }, [query]);
+
+  const setNotesQuery = useCallback((notesQuery: string) => {
+    setQuery(notesQuery);
+  }, []);
+
   const getNotesCount = useCallback(() => {
     return count;
   }, [count]);
@@ -91,6 +102,8 @@ const NotesProvider: React.FC = ({ children }) => {
         addNote,
         updateNote,
         removeNote,
+        getNotesQuery,
+        setNotesQuery,
         getNotesCount,
         setNotesCount,
         getCurrentPage,

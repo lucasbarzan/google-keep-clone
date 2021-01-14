@@ -10,10 +10,10 @@ import { useAuth } from '../../hooks/auth';
 
 interface HeaderProps {
   onToggleSidebar(): void;
-  searchIn: React.MutableRefObject<string>;
+  fetch(options: { isFirstQuery: boolean; query?: string }): void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onToggleSidebar, searchIn }) => {
+const Header: React.FC<HeaderProps> = ({ onToggleSidebar, fetch }) => {
   const { signOut } = useAuth();
 
   return (
@@ -23,7 +23,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleSidebar, searchIn }) => {
         <img src={Logo} alt="Google Keep Clone Logo" />
         <h1>Keep Clone</h1>
       </Link>
-      <SearchBar searchIn={searchIn} name="search" />
+      <SearchBar fetch={fetch} name="search" />
       <CircularButton id="exit-button" icon={MdExitToApp} onClick={signOut} />
     </Container>
   );

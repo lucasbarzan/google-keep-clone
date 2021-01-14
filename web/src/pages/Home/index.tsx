@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Modal from 'react-modal';
 import { useLocation, useParams } from 'react-router-dom';
 import { MdLabelOutline } from 'react-icons/md';
@@ -56,6 +50,7 @@ const Home: React.FC = () => {
     getNotes,
     setNotes,
     addNotes,
+    getNotesQuery,
     getNotesCount,
     setNotesCount,
     getCurrentPage,
@@ -68,15 +63,22 @@ const Home: React.FC = () => {
   // To know in which page we are
   const isArchive = pathname === '/archive';
   const isTag = !!tagId;
-  const searchIn = useRef('all');
+  const isHome = !isArchive && !isTag;
 
   const fetchTagsAndNotes = useCallback(
-    async ({ isFirstTime }: { isFirstTime: boolean }) => {
+    async ({
+      isFirstQuery,
+      query: queryStr,
+    }: {
+      isFirstQuery: boolean;
+      query?: string;
+    }) => {
       try {
         const { data: tags } = await api.getAllTags();
         setTags(tags);
 
-        const nextPage = getCurrentPage() + 1;
+        const page = isFirstQuery ? 1 : getCurrentPage() + 1;
+        const query = queryStr !== undefined ? queryStr : getNotesQuery();
 
         if (isArchive) {
           // Archive page
@@ -86,17 +88,15 @@ const Home: React.FC = () => {
             data: { data: archivedNotes, count },
           } = await api.getAllNotes({
             status: NoteStatus.ARCHIVED,
-            page: nextPage,
+            query,
+            page,
           });
-          if (isFirstTime) {
-            setNotes(archivedNotes);
-          } else {
-            addNotes(archivedNotes);
-          }
-          setNotesCount(count);
-          setCurrentPage(nextPage);
 
-          searchIn.current = 'archive';
+          if (isFirstQuery) setNotes(archivedNotes);
+          else addNotes(archivedNotes);
+
+          setNotesCount(count);
+          setCurrentPage(page);
         } else if (isTag) {
           // Tag page
           selectTag(tagId);
@@ -106,18 +106,16 @@ const Home: React.FC = () => {
           } = await api.getAllNotes({
             tagId,
             status: NoteStatus.ACTIVE,
-            page: nextPage,
+            query,
+            page,
           });
-          if (isFirstTime) {
-            setNotes(notes);
-          } else {
-            addNotes(notes);
-          }
-          setNotesCount(count);
-          setCurrentPage(nextPage);
 
-          searchIn.current = tagId;
-        } else {
+          if (isFirstQuery) setNotes(notes);
+          else addNotes(notes);
+
+          setNotesCount(count);
+          setCurrentPage(page);
+        } else if (isHome) {
           // Home page
           selectTag('notes');
 
@@ -125,17 +123,15 @@ const Home: React.FC = () => {
             data: { data: notes, count },
           } = await api.getAllNotes({
             status: NoteStatus.ACTIVE,
-            page: nextPage,
+            query,
+            page,
           });
-          if (isFirstTime) {
-            setNotes(notes);
-          } else {
-            addNotes(notes);
-          }
-          setNotesCount(count);
-          setCurrentPage(nextPage);
 
-          searchIn.current = 'all';
+          if (isFirstQuery) setNotes(notes);
+          else addNotes(notes);
+
+          setNotesCount(count);
+          setCurrentPage(page);
         }
       } catch (err) {
         addToast({
@@ -150,8 +146,10 @@ const Home: React.FC = () => {
       addNotes,
       addToast,
       getCurrentPage,
+      getNotesQuery,
       isArchive,
       isTag,
+      isHome,
       selectTag,
       setCurrentPage,
       setNotes,
@@ -162,77 +160,9 @@ const Home: React.FC = () => {
   );
 
   useEffect(() => {
-    fetchTagsAndNotes({ isFirstTime: true });
-  }, []);
-
-  // useEffect(() => {
-  //   const func = async () => {
-  //     try {
-  //       const { data: tags } = await api.getAllTags();
-  //       setTags(tags);
-
-  //       if (isArchive) {
-  //         // Archive page
-  //         selectTag('archive');
-
-  //         const {
-  //           data: { data: archivedNotes, count },
-  //         } = await api.getAllNotes({
-  //           status: NoteStatus.ARCHIVED,
-  //         });
-  //         setNotes(archivedNotes);
-  //         setNotesCount(count);
-
-  //         searchIn.current = 'archive';
-  //       } else if (isTag) {
-  //         // Tag page
-  //         selectTag(tagId);
-
-  //         const {
-  //           data: { data: notes, count },
-  //         } = await api.getAllNotes({
-  //           tagId,
-  //           status: NoteStatus.ACTIVE,
-  //         });
-  //         setNotes(notes);
-  //         setNotesCount(count);
-
-  //         searchIn.current = tagId;
-  //       } else {
-  //         // Home page
-  //         selectTag('notes');
-
-  //         const {
-  //           data: { data: notes, count },
-  //         } = await api.getAllNotes({
-  //           status: NoteStatus.ACTIVE,
-  //         });
-  //         setNotes(notes);
-  //         setNotesCount(count);
-
-  //         searchIn.current = 'all';
-  //       }
-  //     } catch (err) {
-  //       addToast({
-  //         type: 'error',
-  //         title: 'Erro ao acessar suas notas',
-  //         description:
-  //           'Verifique a conexão com a internet e recarregue a página.',
-  //       });
-  //     }
-  //   };
-
-  //   func();
-  // }, [
-  //   addToast,
-  //   isArchive,
-  //   isTag,
-  //   pathname,
-  //   selectTag,
-  //   setNotes,
-  //   setTags,
-  //   tagId,
-  // ]);
+    fetchTagsAndNotes({ isFirstQuery: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isArchive, isTag, isHome]);
 
   const notes = useMemo(() => getNotes(), [getNotes]);
 
@@ -267,7 +197,7 @@ const Home: React.FC = () => {
 
   return (
     <Container>
-      <Header searchIn={searchIn} onToggleSidebar={toggleSidebar} />
+      <Header fetch={fetchTagsAndNotes} onToggleSidebar={toggleSidebar} />
       <Contents>
         <Sidebar show={showSidebar} />
         <BarAndNotes>
@@ -276,7 +206,7 @@ const Home: React.FC = () => {
           </Bar>
           <InfiniteScroll
             dataLength={getNotesCount()}
-            next={() => fetchTagsAndNotes({ isFirstTime: false })}
+            next={() => fetchTagsAndNotes({ isFirstQuery: false })}
             hasMore={notes.length < getNotesCount()}
             loader={<h4>Carregando...</h4>}
           >

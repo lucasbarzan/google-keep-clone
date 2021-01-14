@@ -7,23 +7,21 @@ import React, {
 import { MdSearch, MdClose } from 'react-icons/md';
 import { useNotes } from '../../hooks/notes';
 import { useToast } from '../../hooks/toast';
-import api from '../../services/api';
-import NoteStatus from '../../utils/NoteStatus';
 
 import CircularButton from '../CircularButton';
 import { Container } from './styles';
 
 interface SearchBarProps extends InputHTMLAttributes<HTMLInputElement> {
-  searchIn: React.MutableRefObject<string>;
+  fetch(options: { isFirstQuery: boolean; query?: string }): void;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ searchIn, ...rest }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ fetch, ...rest }) => {
   const [inputQuery, setInputQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [showClearButton, setShowClearButton] = useState(false);
 
   const { addToast } = useToast();
-  const { setNotes, setNotesCount } = useNotes();
+  const { setNotesQuery } = useNotes();
 
   const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setInputQuery(e.target.value);
@@ -39,35 +37,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ searchIn, ...rest }) => {
   }, []);
 
   const handleSearch = useCallback(
-    async (query: string) => {
+    async (options: { isFirstQuery: boolean; query?: string }) => {
       try {
-        let response;
-
-        if (searchIn.current === 'all') {
-          // All notes
-          response = await api.getAllNotes({
-            status: NoteStatus.ACTIVE,
-            query,
-          });
-        } else if (searchIn.current === 'archive') {
-          // Archived notes
-          response = await api.getAllNotes({
-            status: NoteStatus.ARCHIVED,
-            query,
-          });
-        } else {
-          // A tag's notes
-          response = await api.getAllNotes({
-            status: NoteStatus.ACTIVE,
-            query,
-            tagId: searchIn.current,
-          });
-        }
-
-        const { data: notes, count } = response.data;
-
-        setNotes(notes);
-        setNotesCount(count);
+        if (options.query !== undefined) setNotesQuery(options.query);
+        fetch(options);
       } catch (err) {
         addToast({
           type: 'error',
@@ -75,13 +48,13 @@ const SearchBar: React.FC<SearchBarProps> = ({ searchIn, ...rest }) => {
         });
       }
     },
-    [addToast, searchIn, setNotesCount, setNotes],
+    [setNotesQuery, fetch, addToast],
   );
 
   const handleInputKeyDown = useCallback(
     e => {
       if (e.keyCode === 13) {
-        handleSearch(inputQuery);
+        handleSearch({ query: inputQuery, isFirstQuery: true });
       }
     },
     [handleSearch, inputQuery],
@@ -91,7 +64,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ searchIn, ...rest }) => {
     setShowClearButton(false);
     setInputQuery('');
 
-    handleSearch('');
+    handleSearch({ query: '', isFirstQuery: true });
   }, [handleSearch]);
 
   return (

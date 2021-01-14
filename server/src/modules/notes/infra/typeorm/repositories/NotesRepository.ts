@@ -36,7 +36,7 @@ class NotesRepository implements INotesRepository {
 
     if (tag_id) {
       dbQuery = dbQuery
-        .andWhere('note.tag = :tag', {
+        .andWhere('note.tag_id = :tag_id', {
           tag_id,
         });
     }
@@ -49,9 +49,9 @@ class NotesRepository implements INotesRepository {
     }
 
     const [data, count] = await dbQuery
-      .orderBy('note.created_at', 'DESC')
       .skip(25 * (page - 1))
       .take(25)
+      .orderBy('note.created_at', 'DESC')
       .getManyAndCount();
 
     return { data, count };
