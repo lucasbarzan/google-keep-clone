@@ -55,12 +55,18 @@ interface ResetUserPasswordReq {
   password_confirmation: string;
 }
 
-/// /////////// NOTES Requests /////////// ///
+/// /////////// NOTES Requests/Responses /////////// ///
 
 interface GetAllNotesReq {
   tagId?: string;
   query?: string;
   status: number;
+  page?: number;
+}
+
+interface GetAllNotesRes {
+  data: Note[];
+  count: number;
 }
 
 interface CreateNoteReq {
@@ -148,12 +154,14 @@ class api {
     tagId,
     query,
     status,
-  }: GetAllNotesReq): Promise<AxiosResponse<Note[]>> {
-    const response = await api.axiosInstance.get<Note[]>('notes', {
+    page,
+  }: GetAllNotesReq): Promise<AxiosResponse<GetAllNotesRes>> {
+    const response = await api.axiosInstance.get<GetAllNotesRes>('notes', {
       params: {
-        tag: tagId,
+        tag_id: tagId,
         query,
         status,
+        page,
       },
     });
     return response;

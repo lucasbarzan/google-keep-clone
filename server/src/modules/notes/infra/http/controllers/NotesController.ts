@@ -9,19 +9,20 @@ import { classToClass } from 'class-transformer';
 
 export default class NotesController {
   public async index(request: Request, response: Response): Promise<Response> {
-    const { tag, query, status } = request.query;
+    const { tag_id, query, status, page } = request.query;
     const { id: user_id } = request.user;
 
     const listNotes = container.resolve(ListNotesService);
 
-    const notes = await listNotes.execute({
+    const { data, count } = await listNotes.execute({
       user_id,
-      tag: tag ? String(tag) : undefined,
+      tag_id: tag_id ? String(tag_id) : undefined,
       query: query ? String(query) : undefined,
       status: Number(status),
+      page: Number(page),
     });
 
-    return response.json(classToClass(notes));
+    return response.json({ data: classToClass(data), count });
   }
 
   public async create(request: Request, response: Response): Promise<Response> {

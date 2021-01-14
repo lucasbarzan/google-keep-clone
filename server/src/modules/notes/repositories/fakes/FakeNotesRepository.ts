@@ -5,6 +5,7 @@ import ICreateNoteDTO from '@modules/notes/dtos/ICreateNoteDTO';
 import IFindAllNotesDTO from '@modules/notes/dtos/IFindAllNotesDTO';
 
 import Note from '../../infra/typeorm/entities/Note';
+import IFindAllNotesResponseDTO from '@modules/notes/dtos/IFindAllNotesResponseDTO';
 
 class FakeNotesRepository implements INotesRepository {
   private notes: Note[] = [];
@@ -15,7 +16,7 @@ class FakeNotesRepository implements INotesRepository {
     return findNote;
   }
 
-  public async findAll({ user_id, tag, query, status }: IFindAllNotesDTO): Promise<Note[]> {
+  public async findAll({ user_id, tag_id, query, status, page }: IFindAllNotesDTO): Promise<IFindAllNotesResponseDTO> {
     let notes = this.notes.filter(noteItem =>
       (noteItem.user_id === user_id) &&
       (noteItem.status === status)
@@ -27,9 +28,15 @@ class FakeNotesRepository implements INotesRepository {
       )
     }
 
-    // TODO: Filter by tag
+    if (tag_id) {
+      notes = notes.filter(noteItem =>
+        noteItem.tag_id === tag_id
+      )
+    }
 
-    return notes;
+    notes.splice(0, 25 * (page - 1))
+
+    return { data: notes, count: notes.length };
   }
 
   public async create(noteData: ICreateNoteDTO): Promise<Note> {

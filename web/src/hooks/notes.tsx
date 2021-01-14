@@ -14,15 +14,22 @@ interface Note {
 interface NotesContextData {
   getNotes(): Note[];
   setNotes(notes: Note[]): void;
+  addNotes(notes: Note[]): void;
   addNote(note: Note): void;
   updateNote(note: Note): void;
   removeNote(id: string): void;
+  getCurrentPage(): number;
+  setCurrentPage(count: number): void;
+  getNotesCount(): number;
+  setNotesCount(count: number): void;
 }
 
 const NotesContext = createContext<NotesContextData>({} as NotesContextData);
 
 const NotesProvider: React.FC = ({ children }) => {
   const [allNotes, setAllNotes] = useState<Note[]>([]);
+  const [count, setCount] = useState(0);
+  const [page, setPage] = useState(0);
 
   const getNotes = useCallback((): Note[] => {
     return allNotes;
@@ -44,6 +51,13 @@ const NotesProvider: React.FC = ({ children }) => {
     setAllNotes(notes);
   }, []);
 
+  const addNotes = useCallback(
+    (notes: Note[]) => {
+      setAllNotes([...allNotes, ...notes]);
+    },
+    [allNotes],
+  );
+
   const addNote = useCallback((note: Note) => {
     setAllNotes(state => [note, ...state]);
   }, []);
@@ -52,14 +66,35 @@ const NotesProvider: React.FC = ({ children }) => {
     setAllNotes(state => state.filter(note => note.id !== id));
   }, []);
 
+  const getNotesCount = useCallback(() => {
+    return count;
+  }, [count]);
+
+  const setNotesCount = useCallback((notesCount: number) => {
+    setCount(notesCount);
+  }, []);
+
+  const getCurrentPage = useCallback(() => {
+    return page;
+  }, [page]);
+
+  const setCurrentPage = useCallback((currentPage: number) => {
+    setPage(currentPage);
+  }, []);
+
   return (
     <NotesContext.Provider
       value={{
         getNotes,
         setNotes,
+        addNotes,
         addNote,
         updateNote,
         removeNote,
+        getNotesCount,
+        setNotesCount,
+        getCurrentPage,
+        setCurrentPage,
       }}
     >
       {children}

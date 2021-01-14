@@ -6,9 +6,15 @@ import NoteStatus from '../dtos/NoteStatus';
 
 interface IRequest {
   user_id: string;
-  tag?: string;
+  tag_id?: string;
   query?: string;
   status: NoteStatus;
+  page: number;
+}
+
+interface IResponse {
+  data: Note[];
+  count: number;
 }
 
 @injectable()
@@ -18,15 +24,16 @@ class ListNotesService {
     private notesRepository: INotesRepository,
   ) {}
 
-  public async execute({ user_id, tag, query, status }: IRequest): Promise<Note[]> {
-    const notes = await this.notesRepository.findAll({
+  public async execute({ user_id, tag_id, query, status, page }: IRequest): Promise<IResponse> {
+    const { data, count } = await this.notesRepository.findAll({
       user_id,
-      tag,
+      tag_id,
       query,
       status,
+      page
     });
 
-    return notes;
+    return { data, count };
   }
 }
 

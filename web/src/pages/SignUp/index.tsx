@@ -38,8 +38,8 @@ const SignUp: React.FC = () => {
             .email('Digite um e-mail válido')
             .required('Email obrigatório'),
           password: Yup.string()
-            .min(6)
-            .required('Senha de pelo menos 6 dígitos obrigatória'),
+            .min(6, 'A senha deve ter pelo menos 6 dígitos')
+            .required('Senha obrigatória'),
         });
 
         await schema.validate(data, { abortEarly: false });
@@ -57,7 +57,6 @@ const SignUp: React.FC = () => {
         addToast({
           type: 'success',
           title: 'Cadastro realizado com sucesso!',
-          description: 'Agora é só entrar na plataforma.',
         });
 
         history.push('/');

@@ -27,6 +27,7 @@ export const Notes = styled.div`
   flex-wrap: wrap;
   max-width: 85%;
   margin: 2.4rem auto;
+  justify-content: center;
 `;
 
 export const NoNotes = styled.div`

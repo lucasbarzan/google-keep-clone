@@ -23,7 +23,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ searchIn, ...rest }) => {
   const [showClearButton, setShowClearButton] = useState(false);
 
   const { addToast } = useToast();
-  const { setNotes } = useNotes();
+  const { setNotes, setNotesCount } = useNotes();
 
   const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setInputQuery(e.target.value);
@@ -64,7 +64,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ searchIn, ...rest }) => {
           });
         }
 
-        setNotes(response.data);
+        const { data: notes, count } = response.data;
+
+        setNotes(notes);
+        setNotesCount(count);
       } catch (err) {
         addToast({
           type: 'error',
@@ -72,7 +75,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ searchIn, ...rest }) => {
         });
       }
     },
-    [addToast, searchIn, setNotes],
+    [addToast, searchIn, setNotesCount, setNotes],
   );
 
   const handleInputKeyDown = useCallback(

@@ -23,9 +23,10 @@ notesRouter.get(
   '/',
   celebrate({
     [Segments.QUERY]: {
-      tag: Joi.string().uuid(),
+      tag_id: Joi.string().uuid(),
       query: Joi.string().allow(''),
       status: Joi.number().valid(...getEnumValues(NoteStatus)).required(),
+      page: Joi.number().min(1).default(1),
     },
   }),
   notesController.index,

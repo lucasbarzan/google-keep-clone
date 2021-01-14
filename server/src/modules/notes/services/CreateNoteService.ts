@@ -43,7 +43,7 @@ class CreateNoteService {
       title,
       body,
       color,
-      tag_id,
+      tag_id: tag_id ? tag_id : undefined,
       status: NoteStatus.ACTIVE,
     });
 

@@ -39,8 +39,8 @@ const ResetPassword: React.FC = () => {
 
         const schema = Yup.object().shape({
           password: Yup.string()
-            .min(6)
-            .required('Senha de pelo menos 6 dígitos obrigatória'),
+            .min(6, 'A senha deve ter pelo menos 6 dígitos')
+            .required('Senha obrigatória'),
           password_confirmation: Yup.string().oneOf(
             [Yup.ref('password')],
             'Confirmação incorreta',

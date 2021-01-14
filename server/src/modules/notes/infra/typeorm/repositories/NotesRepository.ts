@@ -4,6 +4,7 @@ import INotesRepository from '@modules/notes/repositories/INotesRepository';
 import ICreateNoteDTO from '@modules/notes/dtos/ICreateNoteDTO';
 import IFindAllNotesDTO from '@modules/notes/dtos/IFindAllNotesDTO';
 import Note from '../entities/Note';
+import IFindAllNotesResponseDTO from '@modules/notes/dtos/IFindAllNotesResponseDTO';
 
 class NotesRepository implements INotesRepository {
   private ormRepository: Repository<Note>;
@@ -20,7 +21,7 @@ class NotesRepository implements INotesRepository {
     return note;
   }
 
-  public async findAll({ user_id, tag, query, status }: IFindAllNotesDTO): Promise<Note[]> {
+  public async findAll({ user_id, tag_id, query, status, page }: IFindAllNotesDTO): Promise<IFindAllNotesResponseDTO> {
     let dbQuery = this.ormRepository
       .createQueryBuilder('note')
       .leftJoinAndSelect("note.tag", "tag");
@@ -33,10 +34,10 @@ class NotesRepository implements INotesRepository {
         user_id,
       });
 
-    if (tag) {
+    if (tag_id) {
       dbQuery = dbQuery
         .andWhere('note.tag = :tag', {
-          tag,
+          tag_id,
         });
     }
 
@@ -47,11 +48,13 @@ class NotesRepository implements INotesRepository {
         });
     }
 
-    const notes = await dbQuery
+    const [data, count] = await dbQuery
       .orderBy('note.created_at', 'DESC')
-      .getMany();
+      .skip(25 * (page - 1))
+      .take(25)
+      .getManyAndCount();
 
-    return notes;
+    return { data, count };
   }
 
   public async create(noteData: ICreateNoteDTO): Promise<Note> {

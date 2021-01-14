@@ -8,6 +8,7 @@ import React, {
 import Modal from 'react-modal';
 import { useLocation, useParams } from 'react-router-dom';
 import { MdLabelOutline } from 'react-icons/md';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import CreateNoteBar from '../../components/CreateNoteBar';
 import Header from '../../components/Header';
 import Sidebar from '../../components/Sidebar';
@@ -51,7 +52,15 @@ const Home: React.FC = () => {
 
   const { addToast } = useToast();
   const { setTags, selectTag } = useTags();
-  const { getNotes, setNotes } = useNotes();
+  const {
+    getNotes,
+    setNotes,
+    addNotes,
+    getNotesCount,
+    setNotesCount,
+    getCurrentPage,
+    setCurrentPage,
+  } = useNotes();
 
   const { id: tagId } = useParams<HomeParams>();
   const { pathname } = useLocation();
@@ -61,41 +70,70 @@ const Home: React.FC = () => {
   const isTag = !!tagId;
   const searchIn = useRef('all');
 
-  useEffect(() => {
-    const func = async () => {
+  const fetchTagsAndNotes = useCallback(
+    async ({ isFirstTime }: { isFirstTime: boolean }) => {
       try {
         const { data: tags } = await api.getAllTags();
         setTags(tags);
+
+        const nextPage = getCurrentPage() + 1;
 
         if (isArchive) {
           // Archive page
           selectTag('archive');
 
-          const { data: archivedNotes } = await api.getAllNotes({
+          const {
+            data: { data: archivedNotes, count },
+          } = await api.getAllNotes({
             status: NoteStatus.ARCHIVED,
+            page: nextPage,
           });
-          setNotes(archivedNotes);
+          if (isFirstTime) {
+            setNotes(archivedNotes);
+          } else {
+            addNotes(archivedNotes);
+          }
+          setNotesCount(count);
+          setCurrentPage(nextPage);
 
           searchIn.current = 'archive';
         } else if (isTag) {
           // Tag page
           selectTag(tagId);
 
-          const { data: notes } = await api.getAllNotes({
+          const {
+            data: { data: notes, count },
+          } = await api.getAllNotes({
             tagId,
             status: NoteStatus.ACTIVE,
+            page: nextPage,
           });
-          setNotes(notes);
+          if (isFirstTime) {
+            setNotes(notes);
+          } else {
+            addNotes(notes);
+          }
+          setNotesCount(count);
+          setCurrentPage(nextPage);
 
           searchIn.current = tagId;
         } else {
           // Home page
           selectTag('notes');
 
-          const { data: notes } = await api.getAllNotes({
+          const {
+            data: { data: notes, count },
+          } = await api.getAllNotes({
             status: NoteStatus.ACTIVE,
+            page: nextPage,
           });
-          setNotes(notes);
+          if (isFirstTime) {
+            setNotes(notes);
+          } else {
+            addNotes(notes);
+          }
+          setNotesCount(count);
+          setCurrentPage(nextPage);
 
           searchIn.current = 'all';
         }
@@ -107,19 +145,94 @@ const Home: React.FC = () => {
             'Verifique a conexão com a internet e recarregue a página.',
         });
       }
-    };
+    },
+    [
+      addNotes,
+      addToast,
+      getCurrentPage,
+      isArchive,
+      isTag,
+      selectTag,
+      setCurrentPage,
+      setNotes,
+      setNotesCount,
+      setTags,
+      tagId,
+    ],
+  );
 
-    func();
-  }, [
-    addToast,
-    isArchive,
-    isTag,
-    pathname,
-    selectTag,
-    setNotes,
-    setTags,
-    tagId,
-  ]);
+  useEffect(() => {
+    fetchTagsAndNotes({ isFirstTime: true });
+  }, []);
+
+  // useEffect(() => {
+  //   const func = async () => {
+  //     try {
+  //       const { data: tags } = await api.getAllTags();
+  //       setTags(tags);
+
+  //       if (isArchive) {
+  //         // Archive page
+  //         selectTag('archive');
+
+  //         const {
+  //           data: { data: archivedNotes, count },
+  //         } = await api.getAllNotes({
+  //           status: NoteStatus.ARCHIVED,
+  //         });
+  //         setNotes(archivedNotes);
+  //         setNotesCount(count);
+
+  //         searchIn.current = 'archive';
+  //       } else if (isTag) {
+  //         // Tag page
+  //         selectTag(tagId);
+
+  //         const {
+  //           data: { data: notes, count },
+  //         } = await api.getAllNotes({
+  //           tagId,
+  //           status: NoteStatus.ACTIVE,
+  //         });
+  //         setNotes(notes);
+  //         setNotesCount(count);
+
+  //         searchIn.current = tagId;
+  //       } else {
+  //         // Home page
+  //         selectTag('notes');
+
+  //         const {
+  //           data: { data: notes, count },
+  //         } = await api.getAllNotes({
+  //           status: NoteStatus.ACTIVE,
+  //         });
+  //         setNotes(notes);
+  //         setNotesCount(count);
+
+  //         searchIn.current = 'all';
+  //       }
+  //     } catch (err) {
+  //       addToast({
+  //         type: 'error',
+  //         title: 'Erro ao acessar suas notas',
+  //         description:
+  //           'Verifique a conexão com a internet e recarregue a página.',
+  //       });
+  //     }
+  //   };
+
+  //   func();
+  // }, [
+  //   addToast,
+  //   isArchive,
+  //   isTag,
+  //   pathname,
+  //   selectTag,
+  //   setNotes,
+  //   setTags,
+  //   tagId,
+  // ]);
 
   const notes = useMemo(() => getNotes(), [getNotes]);
 
@@ -161,25 +274,32 @@ const Home: React.FC = () => {
           <Bar>
             <CreateNoteBar />
           </Bar>
-          <Notes>
-            {notes.length > 0 ? (
-              notes.map(note => (
-                <NoteBlock
-                  key={note.id}
-                  note={note}
-                  isArchive={isArchive}
-                  onOpenNote={handleOpenNote}
-                />
-              ))
-            ) : (
-              <NoNotes>
-                <MdLabelOutline size="12rem" />
-                <span>
-                  {isTag ? 'Não há notas com este marcador' : 'Não há notas'}
-                </span>
-              </NoNotes>
-            )}
-          </Notes>
+          <InfiniteScroll
+            dataLength={getNotesCount()}
+            next={() => fetchTagsAndNotes({ isFirstTime: false })}
+            hasMore={notes.length < getNotesCount()}
+            loader={<h4>Carregando...</h4>}
+          >
+            <Notes>
+              {notes.length > 0 ? (
+                notes.map(note => (
+                  <NoteBlock
+                    key={note.id}
+                    note={note}
+                    isArchive={isArchive}
+                    onOpenNote={handleOpenNote}
+                  />
+                ))
+              ) : (
+                <NoNotes>
+                  <MdLabelOutline size="12rem" />
+                  <span>
+                    {isTag ? 'Não há notas com este marcador' : 'Não há notas'}
+                  </span>
+                </NoNotes>
+              )}
+            </Notes>
+          </InfiniteScroll>
         </BarAndNotes>
       </Contents>
 
