@@ -2,11 +2,14 @@ import styled from 'styled-components';
 
 export const Container = styled.header`
   display: flex;
+  position: fixed;
+  z-index: 999;
   flex-direction: row;
   align-items: center;
   border-bottom: 1px solid #ccc;
   width: 100%;
   padding: 0.8rem 1.2rem;
+  background-color: var(--color-background);
 
   > a {
     display: flex;

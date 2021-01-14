@@ -13,15 +13,14 @@ interface Note {
 
 interface NotesContextData {
   getNotes(): Note[];
-  setNotes(notes: Note[]): void;
-  addNotes(notes: Note[]): void;
+  setNotes(data: { notes: Note[]; notesCount?: number }): void;
+  addNotes(data: { notes: Note[]; notesCount?: number }): void;
   addNote(note: Note): void;
   updateNote(note: Note): void;
   removeNote(id: string): void;
   getNotesQuery(): string;
   setNotesQuery(query: string): void;
   getNotesCount(): number;
-  setNotesCount(count: number): void;
   getCurrentPage(): number;
   setCurrentPage(count: number): void;
 }
@@ -50,23 +49,30 @@ const NotesProvider: React.FC = ({ children }) => {
     [allNotes],
   );
 
-  const setNotes = useCallback((notes: Note[]) => {
-    setAllNotes(notes);
-  }, []);
+  const setNotes = useCallback(
+    ({ notes, notesCount }: { notes: Note[]; notesCount?: number }) => {
+      setAllNotes(notes);
+      if (notesCount) setCount(notesCount);
+    },
+    [],
+  );
 
   const addNotes = useCallback(
-    (notes: Note[]) => {
+    ({ notes, notesCount }: { notes: Note[]; notesCount?: number }) => {
       setAllNotes([...allNotes, ...notes]);
+      if (notesCount) setCount(notesCount);
     },
     [allNotes],
   );
 
   const addNote = useCallback((note: Note) => {
     setAllNotes(state => [note, ...state]);
+    setCount(state => state + 1);
   }, []);
 
   const removeNote = useCallback((id: string) => {
     setAllNotes(state => state.filter(note => note.id !== id));
+    setCount(state => state - 1);
   }, []);
 
   const getNotesQuery = useCallback(() => {
@@ -80,10 +86,6 @@ const NotesProvider: React.FC = ({ children }) => {
   const getNotesCount = useCallback(() => {
     return count;
   }, [count]);
-
-  const setNotesCount = useCallback((notesCount: number) => {
-    setCount(notesCount);
-  }, []);
 
   const getCurrentPage = useCallback(() => {
     return page;
@@ -105,7 +107,6 @@ const NotesProvider: React.FC = ({ children }) => {
         getNotesQuery,
         setNotesQuery,
         getNotesCount,
-        setNotesCount,
         getCurrentPage,
         setCurrentPage,
       }}

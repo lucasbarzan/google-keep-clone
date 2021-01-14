@@ -9,10 +9,19 @@ export const Contents = styled.div`
   height: 100%;
 `;
 
-export const BarAndNotes = styled.div`
+interface BarAndNotesProps {
+  showSidebar: boolean;
+}
+
+export const BarAndNotes = styled.div<BarAndNotesProps>`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: ${props => (props.showSidebar ? 'calc(100% - 28rem)' : '100%')};
+  margin-left: ${props => (props.showSidebar ? '28rem' : '0')};
+  margin-top: 6.5rem;
+  align-content: center;
+  text-align: center;
+  transition: margin-left 0.12s ease-in-out;
 `;
 
 export const Bar = styled.div`
@@ -28,6 +37,7 @@ export const Notes = styled.div`
   max-width: 85%;
   margin: 2.4rem auto;
   justify-content: center;
+  text-align: left;
 `;
 
 export const NoNotes = styled.div`
@@ -43,6 +53,7 @@ export const NoNotes = styled.div`
   span {
     font-size: 2rem;
     color: var(--color-text-secondary);
+    text-align: left;
   }
 `;
 

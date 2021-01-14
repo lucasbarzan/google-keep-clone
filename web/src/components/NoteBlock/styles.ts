@@ -64,8 +64,11 @@ export const NoteArea = styled.div<NoteAreaProps>`
   display: flex;
   flex-direction: column;
   padding: 2rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   strong {
+    display: block;
     font-family: 'Roboto';
     font-size: 1.6rem;
     font-weight: 700;
@@ -73,9 +76,11 @@ export const NoteArea = styled.div<NoteAreaProps>`
   }
 
   span {
+    display: block;
     font-family: 'Roboto';
-    font-size: ${props => (props.bodySize > 100 ? '1.4rem' : '1.8rem')};
+    font-size: ${props => (props.bodySize > 100 ? '1.5rem' : '1.8rem')};
     margin-top: 1rem;
+    line-height: ${props => (props.bodySize > 100 ? '1.85rem' : '2.25rem')};
     cursor: ${props => (props.isModal ? 'text' : 'default')};
   }
 `;

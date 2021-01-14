@@ -60,7 +60,7 @@ const TagsProvider: React.FC = ({ children }) => {
         }
         return note;
       });
-      setNotes(notesAfterTagRemoval);
+      setNotes({ notes: notesAfterTagRemoval });
     },
     [getNotes, setNotes],
   );

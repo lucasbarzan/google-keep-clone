@@ -18,9 +18,11 @@ interface EditTagsModalProps {
 }
 
 const EditTagsModal: React.FC<EditTagsModalProps> = ({ onCloseModal }) => {
+  const [tagToBeAdded, setTagToBeAdded] = useState('');
   // tempTags = { tagId: tagName }
-  const [newTag, setNewTag] = useState('');
-  const [tempTags, setTempTags] = useState<{ [key: string]: string }>({});
+  const [tempTags, setTempTags] = useState<{ [key: string]: string }>(
+    {} as { [key: string]: string },
+  );
 
   const { addToast } = useToast();
   const { getTags, addTag, updateTag, removeTag } = useTags();
@@ -28,8 +30,8 @@ const EditTagsModal: React.FC<EditTagsModalProps> = ({ onCloseModal }) => {
 
   const tags = useMemo(() => getTags(), [getTags]);
 
-  const handleInputNewTag = useCallback(e => {
-    setNewTag(e.target.value);
+  const handleInputTagToBeAdded = useCallback(e => {
+    setTagToBeAdded(e.target.value);
   }, []);
 
   const handleInputTagName = useCallback(
@@ -44,7 +46,7 @@ const EditTagsModal: React.FC<EditTagsModalProps> = ({ onCloseModal }) => {
   const handleCreateTag = useCallback(async () => {
     try {
       const response = await api.createTag({
-        name: newTag,
+        name: tagToBeAdded,
       });
 
       const addedTag = response.data;
@@ -55,7 +57,7 @@ const EditTagsModal: React.FC<EditTagsModalProps> = ({ onCloseModal }) => {
         title: 'Erro ao criar marcador',
       });
     }
-  }, [addTag, addToast, newTag]);
+  }, [addTag, addToast, tagToBeAdded]);
 
   const handleSaveTag = useCallback(
     async (tag: Tag) => {
@@ -67,6 +69,8 @@ const EditTagsModal: React.FC<EditTagsModalProps> = ({ onCloseModal }) => {
 
         const updatedTag = response.data;
         updateTag(updatedTag);
+
+        setTagToBeAdded('');
       } catch (err) {
         addToast({
           type: 'error',
@@ -88,8 +92,6 @@ const EditTagsModal: React.FC<EditTagsModalProps> = ({ onCloseModal }) => {
 
         history.push('/');
       } catch (err) {
-        console.log(err);
-
         addToast({
           type: 'error',
           title: 'Erro ao deletar marcador',
@@ -106,8 +108,8 @@ const EditTagsModal: React.FC<EditTagsModalProps> = ({ onCloseModal }) => {
         <input
           type="text"
           placeholder="Criar novo marcador"
-          value={newTag}
-          onChange={e => handleInputNewTag(e)}
+          value={tagToBeAdded}
+          onChange={e => handleInputTagToBeAdded(e)}
         />
         <CircularButton
           icon={MdCheck}
@@ -126,7 +128,7 @@ const EditTagsModal: React.FC<EditTagsModalProps> = ({ onCloseModal }) => {
           />
           <input
             type="text"
-            value={tempTags[tag.id] || tag.name}
+            value={tempTags[tag.id] !== undefined ? tempTags[tag.id] : tag.name}
             onChange={e => handleInputTagName(e, tag.id)}
           />
           <CircularButton

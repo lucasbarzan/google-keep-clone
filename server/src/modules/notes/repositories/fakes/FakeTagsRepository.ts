@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4';
+import { v4 as uuid } from 'uuid';
 
 import ITagsRepository from '@modules/notes/repositories/ITagsRepository';
 import ICreateTagDTO from '@modules/notes/dtos/ICreateTagDTO';

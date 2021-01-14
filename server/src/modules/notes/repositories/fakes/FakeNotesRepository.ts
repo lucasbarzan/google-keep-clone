@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4';
+import { v4 as uuid } from 'uuid';
 
 import INotesRepository from '@modules/notes/repositories/INotesRepository';
 import ICreateNoteDTO from '@modules/notes/dtos/ICreateNoteDTO';

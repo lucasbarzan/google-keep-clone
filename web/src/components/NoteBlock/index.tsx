@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   MdColorLens,
   MdArchive,
@@ -57,7 +57,9 @@ const NoteBlock: React.FC<NoteBlockProps> = ({
   isModal = false,
   isArchive = false,
 }) => {
-  const [note, setNote] = useState(inputNote);
+  const [note, setNote] = useState({} as Note);
+
+  useEffect(() => setNote(inputNote), [inputNote]);
 
   const { addToast } = useToast();
   const { updateNote, removeNote } = useNotes();

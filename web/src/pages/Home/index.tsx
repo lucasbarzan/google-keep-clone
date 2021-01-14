@@ -52,7 +52,6 @@ const Home: React.FC = () => {
     addNotes,
     getNotesQuery,
     getNotesCount,
-    setNotesCount,
     getCurrentPage,
     setCurrentPage,
   } = useNotes();
@@ -92,10 +91,10 @@ const Home: React.FC = () => {
             page,
           });
 
-          if (isFirstQuery) setNotes(archivedNotes);
-          else addNotes(archivedNotes);
+          if (isFirstQuery)
+            setNotes({ notes: archivedNotes, notesCount: count });
+          else addNotes({ notes: archivedNotes, notesCount: count });
 
-          setNotesCount(count);
           setCurrentPage(page);
         } else if (isTag) {
           // Tag page
@@ -110,10 +109,9 @@ const Home: React.FC = () => {
             page,
           });
 
-          if (isFirstQuery) setNotes(notes);
-          else addNotes(notes);
+          if (isFirstQuery) setNotes({ notes, notesCount: count });
+          else addNotes({ notes, notesCount: count });
 
-          setNotesCount(count);
           setCurrentPage(page);
         } else if (isHome) {
           // Home page
@@ -127,10 +125,9 @@ const Home: React.FC = () => {
             page,
           });
 
-          if (isFirstQuery) setNotes(notes);
-          else addNotes(notes);
+          if (isFirstQuery) setNotes({ notes, notesCount: count });
+          else addNotes({ notes, notesCount: count });
 
-          setNotesCount(count);
           setCurrentPage(page);
         }
       } catch (err) {
@@ -153,7 +150,6 @@ const Home: React.FC = () => {
       selectTag,
       setCurrentPage,
       setNotes,
-      setNotesCount,
       setTags,
       tagId,
     ],
@@ -162,7 +158,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     fetchTagsAndNotes({ isFirstQuery: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isArchive, isTag, isHome]);
+  }, [isArchive, isTag, tagId, isHome]);
 
   const notes = useMemo(() => getNotes(), [getNotes]);
 
@@ -200,7 +196,7 @@ const Home: React.FC = () => {
       <Header fetch={fetchTagsAndNotes} onToggleSidebar={toggleSidebar} />
       <Contents>
         <Sidebar show={showSidebar} />
-        <BarAndNotes>
+        <BarAndNotes showSidebar={showSidebar}>
           <Bar>
             <CreateNoteBar />
           </Bar>

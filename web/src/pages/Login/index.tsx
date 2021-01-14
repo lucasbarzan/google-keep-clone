@@ -51,8 +51,6 @@ const Login: React.FC = () => {
 
         history.push('/');
       } catch (err) {
-        console.log(err);
-
         setIsLoading(false);
 
         if (err instanceof Yup.ValidationError) {
