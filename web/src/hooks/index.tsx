@@ -7,11 +7,11 @@ import { ToastProvider } from './toast';
 
 const AppProvider: React.FC = ({ children }) => (
   <AuthProvider>
-    <TagsProvider>
-      <NotesProvider>
+    <NotesProvider>
+      <TagsProvider>
         <ToastProvider>{children}</ToastProvider>
-      </NotesProvider>
-    </TagsProvider>
+      </TagsProvider>
+    </NotesProvider>
   </AuthProvider>
 );
 

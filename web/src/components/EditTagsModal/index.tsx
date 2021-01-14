@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { MdDelete, MdCheck } from 'react-icons/md';
+import { useHistory } from 'react-router-dom';
 import { useTags } from '../../hooks/tags';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
@@ -23,6 +24,7 @@ const EditTagsModal: React.FC<EditTagsModalProps> = ({ onCloseModal }) => {
 
   const { addToast } = useToast();
   const { getTags, addTag, updateTag, removeTag } = useTags();
+  const history = useHistory();
 
   const tags = useMemo(() => getTags(), [getTags]);
 
@@ -83,14 +85,18 @@ const EditTagsModal: React.FC<EditTagsModalProps> = ({ onCloseModal }) => {
         });
 
         removeTag(tagId);
+
+        history.push('/');
       } catch (err) {
+        console.log(err);
+
         addToast({
           type: 'error',
           title: 'Erro ao deletar marcador',
         });
       }
     },
-    [addToast, removeTag],
+    [addToast, history, removeTag],
   );
 
   return (

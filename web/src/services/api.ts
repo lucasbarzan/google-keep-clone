@@ -169,8 +169,6 @@ class api {
     ...rest
   }: UpdateNoteReq): Promise<AxiosResponse<Note>> {
     const body = { ...rest };
-    if (body.tag_id === '') body.tag_id = String(null);
-    if (body.title === '') body.title = String(null);
     const response = await api.axiosInstance.patch<Note>(`notes/${id}`, body);
     return response;
   }
