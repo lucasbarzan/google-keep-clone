@@ -22,7 +22,8 @@ export const Container = styled.div`
   }
 
   form {
-    width: 34rem;
+    width: 80%;
+    max-width: 34rem;
     text-align: center;
     margin-bottom: 3.2rem;
   }
