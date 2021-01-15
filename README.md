@@ -69,6 +69,7 @@ Tabela de conteúdos
 - [x] Interface responsiva
 - [x] Cadastro e login com e-mail e senha do usuário
 - [x] Busca, criação, atualização e exclusão de notas
+- [x] Infinite scrolling na listagem de notas no frontend
 - [x] Possibilidade de criar tags (categorias) e associá-las a notas
 - [x] Possibilidade de listar notas por tag
 - [x] Personalização da cor das notas
