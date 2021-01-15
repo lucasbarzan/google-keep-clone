@@ -28,7 +28,7 @@
 Tabela de conteúdos
 =================
 
-   * [Autores](#autor)
+   * [Autor](#autor)
    * [Sobre o projeto](#sobre-o-projeto)
    * [Funcionalidades](#funcionalidades)
    * [Layout](#layout)
@@ -60,7 +60,7 @@ Tabela de conteúdos
 
 ## 💻 Sobre o projeto <a name="sobre-o-projeto"></a>
 
-💡 O Google Keep Clone é um app web de notas inspirado no Google Keep que visa reproduzir os principais aspectos e funcionalidades da famosa aplicação utilizando ReactJS e Node.js.
+💡 O Google Keep Clone é um app web de notas inspirado no Google Keep, que visa reproduzir os principais aspectos e funcionalidades da famosa aplicação utilizando ReactJS e Node.js.
 
 ---
 
@@ -83,19 +83,21 @@ O layout do Google Keep Clone traz vários elementos da aplicação original, co
 ### Web <a name="layout-web"></a>
 
 <p align="center" style="display: flex; align-items: flex-start; justify-content: center;">
-  <img alt="Screenshot 1" src="./assets/screenshot1.png" width="265px">
+  <img alt="Screenshot 1" src="./assets/screenshot1.png" width="398px">
 
-  <img alt="Screenshot 2" src="./assets/screenshot2.png" width="265px">
-  
-  <img alt="Screenshot 3" src="./assets/screenshot3.png" width="265px">
+  <img alt="Screenshot 2" src="./assets/screenshot2.png" width="398px">
 </p>
 
 <p align="center" style="display: flex; align-items: flex-start; justify-content: center;">
-  <img alt="Screenshot 4" src="./assets/screenshot4.png" width="265px">
+  <img alt="Screenshot 3" src="./assets/screenshot3.png" width="398px">
 
-  <img alt="Screenshot 5" src="./assets/screenshot5.png" width="265px">
-  
-  <img alt="Screenshot 6" src="./assets/screenshot6.png" width="265px">
+  <img alt="Screenshot 4" src="./assets/screenshot4.png" width="398px">
+</p>
+
+<p align="center" style="display: flex; align-items: flex-start; justify-content: center;">
+  <img alt="Screenshot 5" src="./assets/screenshot5.png" width="398px">
+
+  <img alt="Screenshot 6" src="./assets/screenshot6.png" width="398px">
 </p>
 
 ---
@@ -113,7 +115,7 @@ Este projeto é divido em duas partes:
 Antes de começar, você vai precisar ter instalado em sua máquina as seguintes ferramentas:
 [Git](https://git-scm.com), [Node.js](https://nodejs.org/en/).
 
-Além disto é bom ter um editor para trabalhar com o código como [VSCode](https://code.visualstudio.com/).
+Além disso, é bom ter um editor para trabalhar com o código como [VSCode](https://code.visualstudio.com/).
 
 #### 🎲 Rodando o Backend (servidor) <a name="rodando-o-backend-servidor"></a>
 
@@ -140,7 +142,7 @@ $ cp .env.example .env
 
 # A aplicação utiliza banco de dados MySQL. Caso não tenha um ainda, recomendo criar um container mysql usando o Docker.
 # Com o Docker instalado e rodando, execute o comando abaixo para criar o container "keep_clone"
-docker run --name keep_clone -e MYSQL_ROOT_PASSWORD=docker -p 3306:3306 -d mysql:8.0.22
+$ docker run --name keep_clone -e MYSQL_ROOT_PASSWORD=docker -p 3306:3306 -d mysql:8.0.22
 
 # Crie um banco de dados chamado "keep_clone" (ou o nome que você der nas configurações a seguir).
 # Você pode usar um software como o DBeaver para fazer isso, por exemplo.
