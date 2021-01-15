@@ -135,7 +135,7 @@ $ npm install OU yarn
 
 # Crie um arquivo com as configurações do banco de dados a partir do arquivo de exemplo
 # (você pode modificar os dados caso necessário)
-$ cp ormconfig.example.js ormconfig.js
+$ cp ormconfig.example.json ormconfig.json
 
 # Crie um arquivo com as variáveis de ambiente a partir do arquivo de exemplo
 $ cp .env.example .env
