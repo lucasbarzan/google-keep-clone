@@ -17,10 +17,6 @@ class Note {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // @ManyToOne(() => User)
-  // @JoinColumn({ name: 'user_id' })
-  // user: User;
-
   @Exclude()
   @Column('uuid')
   user_id: string;
