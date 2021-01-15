@@ -151,6 +151,10 @@ $ docker run --name keep_clone -e MYSQL_ROOT_PASSWORD=docker -p 3306:3306 -d mys
 # Rode as migrations do banco de dados
 $ yarn typeorm migration:run
 
+# A aplicação utiliza banco Redis. Caso não tenha um ainda, recomendo criar um container mysql usando o Docker.
+# Com o Docker instalado e rodando, execute o comando abaixo para criar o container "keep_clone_redis"
+$ docker run --name keep_clone_redis -p 6379:6379 -d -t redis:alpine
+
 # Execute a aplicação em modo de desenvolvimento
 $ npm run dev:server OU yarn dev:server
 
