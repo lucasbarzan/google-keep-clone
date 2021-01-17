@@ -149,7 +149,7 @@ $ cp .env.example .env
 # Com o Docker instalado e rodando, execute o comando abaixo para criar o container "keep_clone"
 $ docker run --name keep_clone -e MYSQL_ROOT_PASSWORD=docker -p 3306:3306 -d mysql:8.0.22
 
-# Crie um banco de dados chamado "keep_clone" (ou o nome que você der nas configurações a seguir).
+# Crie um banco de dados chamado "keep_clone" (ou o nome que você deu nas configurações).
 # Você pode usar um software como o DBeaver para fazer isso, por exemplo.
 
 # Rode as migrations do banco de dados

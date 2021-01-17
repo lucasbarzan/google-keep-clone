@@ -136,7 +136,7 @@ $ cd google-keep-clone
 $ cd server
 
 # Install the dependencies
-$ npm install OU yarn
+$ npm install OR yarn
 
 # Create a file with the database configs following the example file
 # (you can change the values if needed)
@@ -149,7 +149,7 @@ $ cp .env.example .env
 # With Docker installed and running, execute the command below to create the "keep_clone" container
 $ docker run --name keep_clone -e MYSQL_ROOT_PASSWORD=docker -p 3306:3306 -d mysql:8.0.22
 
-# Create a database called "keep_clone" (or the name you give in the settings below).
+# Create a database called "keep_clone" (or the name you gave in the settings).
 # You can use a software like DBeaver to do this, for example.
 
 # Run the database migrations
@@ -160,7 +160,7 @@ $ yarn typeorm migration:run
 $ docker run --name keep_clone_redis -p 6379:6379 -d -t redis:alpine
 
 # Run the application in development mode
-$ npm run dev:server OU yarn dev:server
+$ npm run dev:server OR yarn dev:server
 
 # The server will start on port 3333 - access http://localhost:3333 
 
