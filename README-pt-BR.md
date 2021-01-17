@@ -1,5 +1,5 @@
 <h4 align="center">
-     🇧🇷 <a href="https://github.com/lucasbarzan/google-keep-clone/blob/main/README-pt-BR.md" alt="Ler em Português"> Ler em Português (pt-BR) </a>
+     🇺🇸 <a href="https://github.com/lucasbarzan/google-keep-clone/blob/main/README.md" alt="Read in English"> Read in English (en-US) </a>
 </h4>
 
 <h1 align="center">
@@ -7,7 +7,7 @@
 </h1>
 
 <h3 align="center">
-    💡 Web notes app inspired by Google Keep 📝
+    💡 App web de notas inspirado no Google Keep 📝
 </h3>
 
 <p align="center">
@@ -26,30 +26,30 @@
 </p>
 
 <h4 align="center">
-	🚀 Finished! 🚀
+	🚀 Finalizado! 🚀
 </h4>
 
 Tabela de conteúdos
 =================
 
-   * [Author](#autor)
-   * [About the project](#sobre-o-projeto)
-   * [Features](#funcionalidades)
+   * [Autor](#autor)
+   * [Sobre o projeto](#sobre-o-projeto)
+   * [Funcionalidades](#funcionalidades)
    * [Layout](#layout)
      * [Web](#layout-web)
-   * [How to run it](#como-executar-o-projeto)
-     * [Prerequisites](#pre-requisitos)
-     * [Running the Backend (server)](#rodando-o-backend-servidor)
-     * [Running the web app (Frontend)](#rodando-a-aplicacao-web-frontend)
-   * [Technologies](#tecnologias)
+   * [Como executar o projeto](#como-executar-o-projeto)
+     * [Pré-requisitos](#pre-requisitos)
+     * [Rodando o Backend (servidor)](#rodando-o-backend-servidor)
+     * [Rodando a aplicação web (Frontend)](#rodando-a-aplicacao-web-frontend)
+   * [Tecnologias](#tecnologias)
      * [Website](#tecnologias-website)
      * [Server](#tecnologias-server)
-     * [Utilities](#utilitarios)
-   * [How to contribute](#como-contribuir)
-   * [License](#licenca)
+     * [Utilitários](#utilitarios)
+   * [Como contribuir no projeto](#como-contribuir)
+   * [Licença](#licenca)
 
 
-## 🦸 Author <a name="autor"></a>
+## 🦸 Autor <a name="autor"></a>
 
 <a href="https://github.com/lucasbarzan/">
  <img src="https://avatars2.githubusercontent.com/u/25365429?s=460&u=ac94c8da0e69db2558f031d01dbca5c60aa19b77&v=4" width="100px" alt="Lucas Barzan" />
@@ -62,28 +62,28 @@ Tabela de conteúdos
 
 ---
 
-## 💻 About the project <a name="sobre-o-projeto"></a>
+## 💻 Sobre o projeto <a name="sobre-o-projeto"></a>
 
-💡 Google Keep Clone is a web notes app inspired by Google Keep, which aims to reproduce the main aspects and features of the famous application using ReactJS and Node.js.
+💡 O Google Keep Clone é um app web de notas inspirado no Google Keep, que visa reproduzir os principais aspectos e funcionalidades da famosa aplicação utilizando ReactJS e Node.js.
 
 ---
 
-## ⚙️ Features <a name="funcionalidades"></a>
+## ⚙️ Funcionalidades <a name="funcionalidades"></a>
 
-- [x] Responsive UI
-- [x] Signup and Login with user's e-mail and password
-- [x] User is able to search, create, update and delete notes
-- [x] Infinite scrolling (in the list of notes on the frontend)
-- [x] User is able to create tags (categories/labels) and associate them with notes
-- [x] User is able to list notes by tag
-- [x] User is able to customize the color of notes
-- [x] User is able to reset their password once they forget it
+- [x] Interface responsiva
+- [x] Cadastro e login com e-mail e senha do usuário
+- [x] Busca, criação, atualização e exclusão de notas
+- [x] Infinite scrolling na listagem de notas no frontend
+- [x] Possibilidade de criar tags (categorias) e associá-las a notas
+- [x] Possibilidade de listar notas por tag
+- [x] Personalização da cor das notas
+- [x] Recuperação de senha em caso de esquecimento
 
 ---
 
 ## 🎨 Layout <a name="layout"></a>
 
-The Google Keep Clone layout brings several elements of the original application, as you can see in the screenshots below:
+O layout do Google Keep Clone traz vários elementos da aplicação original, como é possível visualizar nas capturas de tela abaixo:
 
 ### Web <a name="layout-web"></a>
 
@@ -107,62 +107,62 @@ The Google Keep Clone layout brings several elements of the original application
 
 ---
 
-## 🚀 How to run it <a name="como-executar-o-projeto"></a>
+## 🚀 Como executar o projeto <a name="como-executar-o-projeto"></a>
 
-This project is divided into two parts:
-1. Backend ("server" folder)
-2. Frontend ("web" folder)
+Este projeto é dividido em duas partes:
+1. Backend (pasta server) 
+2. Frontend (pasta web)
 
-💡 The Frontend needs the Backend to be running in order to work properly.
+💡 O Frontend precisa que o Backend esteja sendo executado para funcionar.
 
-### Prerequisites <a name="pre-requisitos"></a>
+### Pré-requisitos <a name="pre-requisitos"></a>
 
-Before you begin, you will need to have the following tools installed on your machine:
+Antes de começar, você vai precisar ter instalado em sua máquina as seguintes ferramentas:
 [Git](https://git-scm.com), [Node.js](https://nodejs.org/en/).
 
-Also, it’s good to have an editor to work with the code like [VSCode](https://code.visualstudio.com/).
+Além disso, é bom ter um editor para trabalhar com o código como [VSCode](https://code.visualstudio.com/).
 
-#### 🎲 Running the Backend (server) <a name="rodando-o-backend-servidor"></a>
+#### 🎲 Rodando o Backend (servidor) <a name="rodando-o-backend-servidor"></a>
 
 ```bash
 
-# Clone this repository
+# Clone este repositório
 $ git clone git@github.com:lucasbarzan/google-keep-clone.git
 
-# Access the project folder on your terminal/cmd
+# Acesse a pasta do projeto no terminal/cmd
 $ cd google-keep-clone
 
-# Go to server folder
+# Vá para a pasta server
 $ cd server
 
-# Install the dependencies
+# Instale as dependências
 $ npm install OU yarn
 
-# Create a file with the database configs following the example file
-# (you can change the values if needed)
+# Crie um arquivo com as configurações do banco de dados a partir do arquivo de exemplo
+# (você pode modificar os dados caso necessário)
 $ cp ormconfig.example.json ormconfig.json
 
-# Create a file with the environment variables following the example file
+# Crie um arquivo com as variáveis de ambiente a partir do arquivo de exemplo
 $ cp .env.example .env
 
-# The app uses a MySQL database. If you don't have one yet, I recommend creating a mysql container using Docker. 
-# With Docker installed and running, execute the command below to create the "keep_clone" container
+# A aplicação utiliza banco de dados MySQL. Caso não tenha um ainda, recomendo criar um container mysql usando o Docker.
+# Com o Docker instalado e rodando, execute o comando abaixo para criar o container "keep_clone"
 $ docker run --name keep_clone -e MYSQL_ROOT_PASSWORD=docker -p 3306:3306 -d mysql:8.0.22
 
-# Create a database called "keep_clone" (or the name you give in the settings below).
-# You can use a software like DBeaver to do this, for example.
+# Crie um banco de dados chamado "keep_clone" (ou o nome que você der nas configurações a seguir).
+# Você pode usar um software como o DBeaver para fazer isso, por exemplo.
 
-# Run the database migrations
+# Rode as migrations do banco de dados
 $ yarn typeorm migration:run
 
-# The application uses a Redis database. If you don't have one yet, I recommend creating a redis container using Docker.
-# With Docker installed and running, execute the command below to create the container "keep_clone_redis"
+# A aplicação utiliza banco Redis. Caso não tenha um ainda, recomendo criar um container redis usando o Docker.
+# Com o Docker instalado e rodando, execute o comando abaixo para criar o container "keep_clone_redis"
 $ docker run --name keep_clone_redis -p 6379:6379 -d -t redis:alpine
 
-# Run the application in development mode
+# Execute a aplicação em modo de desenvolvimento
 $ npm run dev:server OU yarn dev:server
 
-# The server will start on port 3333 - access http://localhost:3333 
+# O servidor inciará na porta 3333 - acesse http://localhost:3333 
 
 ```
 <p align="center">
@@ -170,34 +170,34 @@ $ npm run dev:server OU yarn dev:server
 </p>
 
 
-#### 🧭 Running the web app (Frontend) <a name="rodando-a-aplicacao-web-frontend"></a>
+#### 🧭 Rodando a aplicação web (Frontend) <a name="rodando-a-aplicacao-web-frontend"></a>
 
 ```bash
 
-# Clone this repository (if you haven't already!)
+# Clone este repositório (caso ainda não o tenha feito!)
 $ git clone git@github.com:lucasbarzan/google-keep-clone.git
 
-# Access the project folder in your terminal/cmd
+# Acesse a pasta do projeto no seu terminal/cmd
 $ cd google-keep-clone
 
-# Go to the Frontend application folder
+# Vá para a pasta da aplicação Frontend
 $ cd web
 
-# Install the dependencies
+# Instale as dependências
 $ npm install OU yarn
 
-# Run the application in development mode
+# Execute a aplicação em modo de desenvolvimento
 $ npm run start OU yarn start
 
-# The application will start on port 3000 - access http://localhost:3000
+# A aplicação será aberta na porta 3000 - acesse http://localhost:3000
 
 ```
 
 ---
 
-## 🛠 Technologies <a name="tecnologias"></a>
+## 🛠 Tecnologias <a name="tecnologias"></a>
 
-The following tools were used in the construction of the project:
+As seguintes ferramentas foram usadas na construção do projeto:
 
 -   **[EditorConfig](https://editorconfig.org/)**
 -   **[ESLint](https://eslint.org/)**
@@ -219,7 +219,7 @@ The following tools were used in the construction of the project:
 -   **[yup](https://github.com/jquense/yup)**
 
 
-> See [package.json](https://github.com/lucasbarzan/google-keep-clone/blob/master/web/package.json)
+> Veja o arquivo [package.json](https://github.com/lucasbarzan/google-keep-clone/blob/master/web/package.json)
 
 #### **Server**  ([NodeJS](https://nodejs.org/en/)  +  [TypeScript](https://www.typescriptlang.org/)) <a name="tecnologias-server"></a>
 
@@ -244,27 +244,27 @@ The following tools were used in the construction of the project:
 -   **[Jest](https://jestjs.io/)**
 -   **[Sentry](https://sentry.io/)**
 
-> See [package.json](https://github.com/lucasbarzan/google-keep-clone/blob/master/server/package.json)
+> Veja o arquivo [package.json](https://github.com/lucasbarzan/google-keep-clone/blob/master/server/package.json)
 
-#### **Utilities** <a name="utilitarios"></a>
+#### **Utilitários** <a name="utilitarios"></a>
 
 -   Editor:  **[Visual Studio Code](https://code.visualstudio.com/)**
--   API tests:  **[Insomnia](https://insomnia.rest/)**
--   Fonts:  **[Montserrat](https://fonts.google.com/specimen/Montserrat)** and **[Roboto](https://fonts.google.com/specimen/Roboto)**
+-   Teste de API:  **[Insomnia](https://insomnia.rest/)**
+-   Fontes:  **[Montserrat](https://fonts.google.com/specimen/Montserrat)** e **[Roboto](https://fonts.google.com/specimen/Roboto)**
 
 ---
 
-## 💪 How to contribute <a name="como-contribuir"></a>
+## 💪 Como contribuir no projeto <a name="como-contribuir"></a>
 
-1. **Fork** the project.
-2. Create a new branch with your changes: `git checkout -b my-feature`
-3. Save your changes and create a commit message describing what you did: `git commit -m" feature: My new feature "`
-4. Submit your changes: `git push origin my-feature`
+1. Faça um **fork** do projeto.
+2. Crie uma nova branch com as suas alterações: `git checkout -b my-feature`
+3. Salve as alterações e crie uma mensagem de commit contando o que você fez: `git commit -m "feature: My new feature"`
+4. Envie as suas alterações: `git push origin my-feature`
 
 ---
 
-## 📝 License <a name="licenca"></a>
+## 📝 Licença <a name="licenca"></a>
 
-This project is under [MIT](./LICENSE) license.
+Este projeto esta sob a licença [MIT](./LICENSE).
 
-Made with ❤️ by Lucas Barzan 👋🏽
+Feito com ❤️ por Lucas Barzan 👋🏽

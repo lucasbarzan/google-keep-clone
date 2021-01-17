@@ -1,6 +1,6 @@
 import NoteColors from '@modules/notes/dtos/NoteColors';
 import NoteStatus from '@modules/notes/dtos/NoteStatus';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude } from 'class-transformer';
 import {
   Entity,
   Column,
