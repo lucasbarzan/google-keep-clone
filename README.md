@@ -29,7 +29,7 @@
 	🚀 Finished! 🚀
 </h4>
 
-Tabela de conteúdos
+Table of Contents
 =================
 
    * [Author](#autor)
